@@ -11,15 +11,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Card {
-
+public class CardRequest {
+    private int requestId;
+    private String requestReasonCode;
+    private String remark;
     private String cardNumber;
-    private String expireDate;
-    private String cardStatus;
-    private int creditLimit;
-    private int cashLimit;
-    private int availableCreditLimit;
-    private int availableCashLimit;
-    private LocalDateTime lastUpdateTime;
-
+    private String status;
+    private LocalDateTime createdTime;
 }
