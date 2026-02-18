@@ -1,4 +1,4 @@
 package edu.epic.cms.repository;
 
-public interface CardRepository {
+public interface CardRequestRepo {
 }
