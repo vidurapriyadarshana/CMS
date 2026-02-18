@@ -1,11 +1,13 @@
 package edu.epic.cms.controller;
 
+import edu.epic.cms.exception.CardCreationException;
+import edu.epic.cms.exception.CardNotFoundException;
 import edu.epic.cms.model.Card;
 import edu.epic.cms.service.CardService;
+import edu.epic.cms.util.CommonResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,8 +22,20 @@ public class CardController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Card>> getAllCards() {
+    public ResponseEntity<CommonResponse> getAllCards() {
         List<Card> cards = cardService.getAllCards();
-        return ResponseEntity.ok(cards);
+        if (cards == null || cards.isEmpty()) {
+            throw new CardNotFoundException("No cards found");
+        }
+        return ResponseEntity.ok(CommonResponse.success(cards));
+    }
+
+    @PostMapping
+    public ResponseEntity<CommonResponse> createCard(@RequestBody Card card) {
+        boolean isCreated = cardService.createCard(card);
+        if (isCreated) {
+            return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.created("Card created successfully"));
+        }
+        throw new CardCreationException("Failed to create card");
     }
 }

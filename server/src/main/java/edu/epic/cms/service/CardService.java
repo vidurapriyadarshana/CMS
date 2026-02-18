@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface CardService {
     List<Card> getAllCards();
+    boolean createCard(Card card);
 }

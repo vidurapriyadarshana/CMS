@@ -36,4 +36,20 @@ public class CardRepoImpl implements CardRepo {
             return card;
         });
     }
+
+    @Override
+    public boolean createCard(Card card) {
+        String sql = "INSERT INTO Card (CardNumber, ExpireDate, CreditLimit, CashLimit, " +
+                "AvailableCreditLimit, AvailableCashLimit) VALUES (?, ?, ?, ?, ?, ?)";
+
+        int result = jdbcTemplate.update(sql,
+                card.getCardNumber(),
+                card.getExpireDate(),
+                card.getCreditLimit(),
+                card.getCashLimit(),
+                card.getAvailableCreditLimit(),
+                card.getAvailableCashLimit());
+        
+        return result > 0;
+    }
 }
