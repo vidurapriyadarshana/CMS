@@ -11,17 +11,21 @@ import javax.sql.DataSource;
 @Configuration
 public class DBConfig {
 
-    @Value("${spring.datasource.url}")
-    private String dbUrl;
+    private final String dbUrl;
+    private final String dbUsername;
+    private final String dbPassword;
+    private final String dbDriverClassName;
 
-    @Value("${spring.datasource.username}")
-    private String dbUsername;
-
-    @Value("${spring.datasource.password}")
-    private String dbPassword;
-
-    @Value("${spring.datasource.driver-class-name}")
-    private String dbDriverClassName;
+    public DBConfig(
+            @Value("${spring.datasource.url}") String dbUrl,
+            @Value("${spring.datasource.username}") String dbUsername,
+            @Value("${spring.datasource.password}") String dbPassword,
+            @Value("${spring.datasource.driver-class-name}") String dbDriverClassName) {
+        this.dbUrl = dbUrl;
+        this.dbUsername = dbUsername;
+        this.dbPassword = dbPassword;
+        this.dbDriverClassName = dbDriverClassName;
+    }
 
     @Bean
     public DataSource dataSource() {
