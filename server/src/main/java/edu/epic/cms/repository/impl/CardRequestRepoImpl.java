@@ -34,7 +34,7 @@ public class CardRequestRepoImpl implements CardRequestRepo {
 
     @Override
     public boolean updateStatusByCardNumber(String cardNumber, String status) {
-        String sql = "UPDATE CardRequest SET Status = ? WHERE CardNumber = ? AND CompletionStatus = 'PENDING'";
+        String sql = "UPDATE CardRequest SET Status = ?, CompletionStatus = 'COMPLETED' WHERE CardNumber = ? AND CompletionStatus = 'PENDING'";
         int result = jdbcTemplate.update(sql, status, cardNumber);
         return result > 0;
     }
