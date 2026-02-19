@@ -77,4 +77,30 @@ public class CardServiceImpl implements CardService {
 
         return cardRepo.updateCard(encryptedCardNumber, updateCard);
     }
+
+    @Override
+    public CardResponse getCardByEncryptedNumber(String encryptedCardNumber) {
+        Card card = cardRepo.getCardByNumber(encryptedCardNumber);
+        if (card == null) {
+            throw new CardNotFoundException("Card not found");
+        }
+
+        CardResponse response = new CardResponse();
+        response.setEncryptedCardNumber(card.getCardNumber());
+
+        String decryptedCardNumber = CardEncryptionUtil.decrypt(card.getCardNumber());
+        String maskedCardNumber = CardEncryptionUtil.maskCardNumber(decryptedCardNumber);
+        response.setCardNumber(maskedCardNumber);
+
+        response.setExpireDate(card.getExpireDate());
+        response.setCardStatus(card.getCardStatus());
+        response.setCreditLimit(card.getCreditLimit());
+        response.setCashLimit(card.getCashLimit());
+        response.setAvailableCreditLimit(card.getAvailableCreditLimit());
+        response.setAvailableCashLimit(card.getAvailableCashLimit());
+        response.setLastUpdateTime(card.getLastUpdateTime());
+
+        return response;
+    }
 }
+

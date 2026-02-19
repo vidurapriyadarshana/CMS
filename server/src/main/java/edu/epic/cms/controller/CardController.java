@@ -34,7 +34,14 @@ public class CardController {
         return ResponseEntity.ok(CommonResponse.success(cards));
     }
 
+    @GetMapping("/{encryptedCardNumber}")
+    public ResponseEntity<CommonResponse> getCardByEncryptedNumber(@PathVariable String encryptedCardNumber) {
+        CardResponse card = cardService.getCardByEncryptedNumber(encryptedCardNumber);
+        return ResponseEntity.ok(CommonResponse.success(card));
+    }
+
     @PostMapping
+
     public ResponseEntity<CommonResponse> createCard(@Valid @RequestBody Card card) {
         boolean isCreated = cardService.createCard(card);
         if (isCreated) {

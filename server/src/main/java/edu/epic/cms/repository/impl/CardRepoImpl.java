@@ -76,4 +76,28 @@ public class CardRepoImpl implements CardRepo {
 
         return result > 0;
     }
+
+    @Override
+    public Card getCardByNumber(String cardNumber) {
+        String sql = "SELECT CardNumber, ExpireDate, CardStatus, CreditLimit, CashLimit, " +
+                "AvailableCreditLimit, AvailableCashLimit, LastUpdateTime FROM Card WHERE CardNumber = ?";
+
+        List<Card> cards = jdbcTemplate.query(sql, (rs, rowNum) -> {
+            Card card = new Card();
+            card.setCardNumber(rs.getString("CardNumber"));
+            card.setExpireDate(rs.getString("ExpireDate"));
+            card.setCardStatus(rs.getString("CardStatus"));
+            card.setCreditLimit(rs.getInt("CreditLimit"));
+            card.setCashLimit(rs.getInt("CashLimit"));
+            card.setAvailableCreditLimit(rs.getInt("AvailableCreditLimit"));
+            card.setAvailableCashLimit(rs.getInt("AvailableCashLimit"));
+            if (rs.getTimestamp("LastUpdateTime") != null) {
+                card.setLastUpdateTime(rs.getTimestamp("LastUpdateTime").toLocalDateTime());
+            }
+            return card;
+        }, cardNumber);
+
+        return cards.stream().findFirst().orElse(null);
+    }
 }
+

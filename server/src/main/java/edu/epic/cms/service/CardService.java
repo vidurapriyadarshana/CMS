@@ -10,4 +10,6 @@ public interface CardService {
     List<CardResponse> getAllCards();
     boolean createCard(Card card);
     boolean updateCard(String encryptedCardNumber, UpdateCard updateCard);
+    CardResponse getCardByEncryptedNumber(String encryptedCardNumber);
 }
+

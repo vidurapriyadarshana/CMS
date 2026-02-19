@@ -10,4 +10,6 @@ public interface CardRepo {
     boolean createCard(Card card);
     boolean existsByCardNumber(String cardNumber);
     boolean updateCard(String cardNumber, UpdateCard updateCard);
+    Card getCardByNumber(String cardNumber);
 }
+
