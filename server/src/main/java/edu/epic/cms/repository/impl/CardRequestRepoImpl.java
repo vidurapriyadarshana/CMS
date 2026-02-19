@@ -38,5 +38,26 @@ public class CardRequestRepoImpl implements CardRequestRepo {
         int result = jdbcTemplate.update(sql, status, cardNumber);
         return result > 0;
     }
+
+    @Override
+    public boolean markRequestAsFailed(String cardNumber) {
+        String sql = "UPDATE CardRequest SET CompletionStatus = 'FAILED' WHERE CardNumber = ? AND CompletionStatus = 'PENDING'";
+        int result = jdbcTemplate.update(sql, cardNumber);
+        return result > 0;
+    }
+
+    @Override
+    public boolean markRequestAsDeactivated(String cardNumber) {
+        String sql = "UPDATE CardRequest SET Status = 'DACT', CompletionStatus = 'DEACTIVATED' WHERE CardNumber = ? AND CompletionStatus = 'PENDING'";
+        int result = jdbcTemplate.update(sql, cardNumber);
+        return result > 0;
+    }
+
+    @Override
+    public boolean isCardDeactivated(String cardNumber) {
+        String sql = "SELECT COUNT(*) FROM CardRequest WHERE CardNumber = ? AND CompletionStatus = 'DEACTIVATED'";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, cardNumber);
+        return count != null && count > 0;
+    }
 }
 

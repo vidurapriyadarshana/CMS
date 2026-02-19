@@ -10,6 +10,7 @@ import edu.epic.cms.repository.CardRepo;
 
 import edu.epic.cms.service.CardService;
 import edu.epic.cms.util.CardEncryptionUtil;
+import edu.epic.cms.repository.CardRequestRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,9 +20,11 @@ import java.util.List;
 public class CardServiceImpl implements CardService {
 
     private final CardRepo cardRepo;
+    private final CardRequestRepo cardRequestRepo;
 
-    public CardServiceImpl(CardRepo cardRepo) {
+    public CardServiceImpl(CardRepo cardRepo, CardRequestRepo cardRequestRepo) {
         this.cardRepo = cardRepo;
+        this.cardRequestRepo = cardRequestRepo;
     }
 
     @Override
@@ -109,7 +112,11 @@ public class CardServiceImpl implements CardService {
         if (!cardRepo.existsByCardNumber(encryptedCardNumber)) {
             throw new CardNotFoundException("Card not found");
         }
-        return cardRepo.deleteCard(encryptedCardNumber);
+        boolean deleted = cardRepo.deleteCard(encryptedCardNumber);
+        if (deleted) {
+            cardRequestRepo.markRequestAsDeactivated(encryptedCardNumber);
+        }
+        return deleted;
     }
 }
 

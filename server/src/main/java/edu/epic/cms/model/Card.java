@@ -10,8 +10,6 @@ import java.time.LocalDateTime;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class Card {
 
     @NotBlank(message = "Card number is required")
@@ -40,4 +38,67 @@ public class Card {
 
     private LocalDateTime lastUpdateTime;
 
+    public String getCardNumber() {
+        return cardNumber;
+    }
+
+    public void setCardNumber(String cardNumber) {
+        this.cardNumber = cardNumber;
+    }
+
+    public String getExpireDate() {
+        return expireDate;
+    }
+
+    public void setExpireDate(String expireDate) {
+        this.expireDate = expireDate;
+    }
+
+    public String getCardStatus() {
+        return cardStatus;
+    }
+
+    public void setCardStatus(String cardStatus) {
+        this.cardStatus = cardStatus;
+    }
+
+    public Integer getCreditLimit() {
+        return creditLimit;
+    }
+
+    public void setCreditLimit(Integer creditLimit) {
+        this.creditLimit = creditLimit;
+    }
+
+    public Integer getCashLimit() {
+        return cashLimit;
+    }
+
+    public void setCashLimit(Integer cashLimit) {
+        this.cashLimit = cashLimit;
+    }
+
+    public Integer getAvailableCreditLimit() {
+        return availableCreditLimit;
+    }
+
+    public void setAvailableCreditLimit(Integer availableCreditLimit) {
+        this.availableCreditLimit = availableCreditLimit;
+    }
+
+    public Integer getAvailableCashLimit() {
+        return availableCashLimit;
+    }
+
+    public void setAvailableCashLimit(Integer availableCashLimit) {
+        this.availableCashLimit = availableCashLimit;
+    }
+
+    public LocalDateTime getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    public void setLastUpdateTime(LocalDateTime lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
+    }
 }

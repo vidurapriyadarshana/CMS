@@ -10,8 +10,6 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class UpdateCard {
 
     @NotBlank(message = "Expire date is required")
@@ -30,4 +28,43 @@ public class UpdateCard {
     @Min(value = 0, message = "Available cash limit must be a positive value")
     private Integer availableCashLimit;
 
+    public String getExpireDate() {
+        return expireDate;
+    }
+
+    public void setExpireDate(String expireDate) {
+        this.expireDate = expireDate;
+    }
+
+    public Integer getCreditLimit() {
+        return creditLimit;
+    }
+
+    public void setCreditLimit(Integer creditLimit) {
+        this.creditLimit = creditLimit;
+    }
+
+    public Integer getCashLimit() {
+        return cashLimit;
+    }
+
+    public void setCashLimit(Integer cashLimit) {
+        this.cashLimit = cashLimit;
+    }
+
+    public Integer getAvailableCreditLimit() {
+        return availableCreditLimit;
+    }
+
+    public void setAvailableCreditLimit(Integer availableCreditLimit) {
+        this.availableCreditLimit = availableCreditLimit;
+    }
+
+    public Integer getAvailableCashLimit() {
+        return availableCashLimit;
+    }
+
+    public void setAvailableCashLimit(Integer availableCashLimit) {
+        this.availableCashLimit = availableCashLimit;
+    }
 }

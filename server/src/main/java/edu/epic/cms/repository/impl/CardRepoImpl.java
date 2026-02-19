@@ -103,7 +103,7 @@ public class CardRepoImpl implements CardRepo {
 
     @Override
     public boolean deleteCard(String cardNumber) {
-        String sql = "UPDATE Card SET CardStatus = 'IACT' WHERE CardNumber = ?";
+        String sql = "UPDATE Card SET CardStatus = 'DACT' WHERE CardNumber = ?";
         int result = jdbcTemplate.update(sql, cardNumber);
         return result > 0;
     }
