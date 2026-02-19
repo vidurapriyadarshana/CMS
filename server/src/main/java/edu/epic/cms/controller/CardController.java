@@ -6,6 +6,7 @@ import edu.epic.cms.model.Card;
 import edu.epic.cms.model.CardResponse;
 import edu.epic.cms.service.CardService;
 import edu.epic.cms.util.CommonResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class CardController {
     }
 
     @PostMapping
-    public ResponseEntity<CommonResponse> createCard(@RequestBody Card card) {
+    public ResponseEntity<CommonResponse> createCard(@Valid @RequestBody Card card) {
         boolean isCreated = cardService.createCard(card);
         if (isCreated) {
             return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.created("Card created successfully"));
