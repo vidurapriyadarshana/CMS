@@ -31,5 +31,12 @@ public class CardRequestRepoImpl implements CardRequestRepo {
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, cardNumber);
         return count != null && count > 0;
     }
+
+    @Override
+    public boolean updateStatusByCardNumber(String cardNumber, String status) {
+        String sql = "UPDATE CardRequest SET Status = ? WHERE CardNumber = ? AND CompletionStatus = 'PENDING'";
+        int result = jdbcTemplate.update(sql, status, cardNumber);
+        return result > 0;
+    }
 }
 

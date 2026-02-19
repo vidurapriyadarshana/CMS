@@ -27,4 +27,12 @@ public class CardRequestServiceImpl implements CardRequestService {
 
         return cardRequestRepo.createCardRequest(cardRequest);
     }
+
+    @Override
+    public boolean updateStatus(String encryptedCardNumber, String status) {
+        if (!cardRequestRepo.hasPendingRequest(encryptedCardNumber)) {
+            throw new CardCreationException("No pending request found for this card number");
+        }
+        return cardRequestRepo.updateStatusByCardNumber(encryptedCardNumber, status);
+    }
 }
