@@ -1,10 +1,11 @@
 package edu.epic.cms.service;
 
 import edu.epic.cms.model.Card;
+import edu.epic.cms.model.CardResponse;
 
 import java.util.List;
 
 public interface CardService {
-    List<Card> getAllCards();
+    List<CardResponse> getAllCards();
     boolean createCard(Card card);
 }

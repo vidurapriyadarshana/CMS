@@ -3,6 +3,7 @@ package edu.epic.cms.controller;
 import edu.epic.cms.exception.CardCreationException;
 import edu.epic.cms.exception.CardNotFoundException;
 import edu.epic.cms.model.Card;
+import edu.epic.cms.model.CardResponse;
 import edu.epic.cms.service.CardService;
 import edu.epic.cms.util.CommonResponse;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,7 @@ public class CardController {
 
     @GetMapping
     public ResponseEntity<CommonResponse> getAllCards() {
-        List<Card> cards = cardService.getAllCards();
+        List<CardResponse> cards = cardService.getAllCards();
         if (cards == null || cards.isEmpty()) {
             throw new CardNotFoundException("No cards found");
         }

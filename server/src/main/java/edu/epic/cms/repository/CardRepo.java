@@ -7,4 +7,5 @@ import java.util.List;
 public interface CardRepo {
     List<Card> getAllCards();
     boolean createCard(Card card);
+    boolean existsByCardNumber(String cardNumber);
 }

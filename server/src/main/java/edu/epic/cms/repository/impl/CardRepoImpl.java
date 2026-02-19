@@ -52,4 +52,11 @@ public class CardRepoImpl implements CardRepo {
         
         return result > 0;
     }
+
+    @Override
+    public boolean existsByCardNumber(String cardNumber) {
+        String sql = "SELECT COUNT(*) FROM Card WHERE CardNumber = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, cardNumber);
+        return count != null && count > 0;
+    }
 }
