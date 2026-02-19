@@ -24,5 +24,12 @@ public class CardRequestRepoImpl implements CardRequestRepo {
                 cardRequest.getStatus());
         return result > 0;
     }
+
+    @Override
+    public boolean hasPendingRequest(String cardNumber) {
+        String sql = "SELECT COUNT(*) FROM CardRequest WHERE CardNumber = ? AND CompletionStatus = 'PENDING'";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, cardNumber);
+        return count != null && count > 0;
+    }
 }
 

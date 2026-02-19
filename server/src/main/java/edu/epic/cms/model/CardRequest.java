@@ -31,4 +31,6 @@ public class CardRequest {
     private String status;
 
     private LocalDateTime createdTime;
+
+    private String completionStatus;
 }
