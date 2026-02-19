@@ -27,16 +27,16 @@ public class Card {
     private String cardStatus;
 
     @Min(value = 0, message = "Credit limit must be a positive value")
-    private int creditLimit;
+    private Integer creditLimit;
 
     @Min(value = 0, message = "Cash limit must be a positive value")
-    private int cashLimit;
+    private Integer cashLimit;
 
     @Min(value = 0, message = "Available credit limit must be a positive value")
-    private int availableCreditLimit;
+    private Integer availableCreditLimit;
 
     @Min(value = 0, message = "Available cash limit must be a positive value")
-    private int availableCashLimit;
+    private Integer availableCashLimit;
 
     private LocalDateTime lastUpdateTime;
 

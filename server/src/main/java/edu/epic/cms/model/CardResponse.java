@@ -17,10 +17,10 @@ public class CardResponse {
     private String encryptedCardNumber;
     private String expireDate;
     private String cardStatus;
-    private int creditLimit;
-    private int cashLimit;
-    private int availableCreditLimit;
-    private int availableCashLimit;
+    private Integer creditLimit;
+    private Integer cashLimit;
+    private Integer availableCreditLimit;
+    private Integer availableCashLimit;
     private LocalDateTime lastUpdateTime;
 
 }

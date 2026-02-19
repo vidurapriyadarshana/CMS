@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 public class CardRequest {
 
-    private int requestId;
+    private Integer requestId;
 
     @NotBlank(message = "Request reason code is required")
     @Size(max = 4, message = "Request reason code must not exceed 4 characters")
