@@ -28,8 +28,15 @@ public class CardServiceImpl implements CardService {
 
         for (Card card : cards) {
             CardResponse response = new CardResponse();
-            response.setCardNumber(CardEncryptionUtil.maskCardNumber(card.getCardNumber()));
-            response.setEncryptedCardNumber(CardEncryptionUtil.encrypt(card.getCardNumber()));
+
+            String encryptedCardNumber = card.getCardNumber();
+            response.setEncryptedCardNumber(encryptedCardNumber);
+
+            String decryptedCardNumber = CardEncryptionUtil.decrypt(encryptedCardNumber);
+
+            String maskedCardNumber = CardEncryptionUtil.maskCardNumber(decryptedCardNumber);
+            response.setCardNumber(maskedCardNumber);
+            
             response.setExpireDate(card.getExpireDate());
             response.setCardStatus(card.getCardStatus());
             response.setCreditLimit(card.getCreditLimit());
@@ -48,10 +55,14 @@ public class CardServiceImpl implements CardService {
         if (card.getCardNumber() == null || card.getCardNumber().isEmpty()) {
             throw new CardCreationException("Card number is required");
         }
+
+        String encryptedCardNumber = CardEncryptionUtil.encrypt(card.getCardNumber());
         
-        if (cardRepo.existsByCardNumber(card.getCardNumber())) {
+        if (cardRepo.existsByCardNumber(encryptedCardNumber)) {
             throw new DuplicateCardException("Card with number " + CardEncryptionUtil.maskCardNumber(card.getCardNumber()) + " already exists");
         }
+
+        card.setCardNumber(encryptedCardNumber);
         
         return cardRepo.createCard(card);
     }
