@@ -1,46 +1,30 @@
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-import type { CardResponse, CommonResponse, UpdateCardRequest } from '../types/card';
+import { useDispatch, useSelector } from 'react-redux';
+import type { CardResponse, UpdateCardRequest } from '../types/card';
+import { fetchCards, updateCard, clearError } from '../store/slices/cardSlice';
+import type { RootState, AppDispatch } from '../store/index';
 import CardTable from '../components/CardTable';
 import CardDetailsModal from '../components/CardDetailsModal';
 import { Loader2 } from 'lucide-react';
 
 const ManageCards = () => {
-    const [cards, setCards] = useState<CardResponse[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    const dispatch = useDispatch<AppDispatch>();
+    const { cards, loading, error } = useSelector((state: RootState) => state.cards);
+
     const [selectedCard, setSelectedCard] = useState<CardResponse | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const fetchCards = async () => {
-        try {
-            setLoading(true);
-            const response = await axios.get<CommonResponse<CardResponse[]>>('/cards');
-            if (response.data.code === 200 && Array.isArray(response.data.data)) {
-                // Sort by last update time descending (optional, but good UX)
-                const sortedCards = response.data.data.sort((a, b) => {
-                    const dateA = a.lastUpdateTime ? new Date(a.lastUpdateTime).getTime() : 0;
-                    const dateB = b.lastUpdateTime ? new Date(b.lastUpdateTime).getTime() : 0;
-                    return dateB - dateA;
-                });
-                setCards(sortedCards);
-            } else if (response.data.code !== 200) {
-                setError('Failed to fetch cards: ' + response.data.status);
-            } else {
-                setCards([]); // Fallback if data is not an array
-            }
-        } catch (err: any) {
-            console.error('Error in fetchCards:', err);
-            setError(err.message || 'An unexpected error occurred.');
-        } finally {
-            setLoading(false);
-        }
-    };
-
     useEffect(() => {
-        fetchCards();
-    }, []);
+        dispatch(fetchCards());
+    }, [dispatch]);
+
+    // Clear error on unmount
+    useEffect(() => {
+        return () => {
+            dispatch(clearError());
+        };
+    }, [dispatch]);
 
     const handleCardClick = (card: CardResponse) => {
         setSelectedCard(card);
@@ -49,25 +33,13 @@ const ManageCards = () => {
 
     const handleUpdateCard = async (encryptedCardNumber: string, data: UpdateCardRequest) => {
         try {
-            const response = await axios.put<CommonResponse<string>>(`/cards/${encryptedCardNumber}`, data);
-            if (response.data.code === 200) {
-                // Refresh list on success
-                await fetchCards();
-                // Update selected card in local state to reflect changes immediately if needed, 
-                // but fetching fresh data is safer.
-                // We might need to close modal or keep it open with updated data.
-                // Let's keep it open but update the selected card ref if possible, 
-                // but since we re-fetched, the `cards` array is new.
-                // We'll just close it or let the user decide. 
-                // For now, let's close it as per common pattern, or just toast success.
-                // The Modal implementation calls onClose inside itself on success? 
-                // No, the modal calls this function and waits. The modal closes itself after this promise resolves.
-            } else {
-                throw new Error('Update failed');
-            }
+            await dispatch(updateCard({ encryptedCardNumber, data })).unwrap();
+            // No need to close modal here, user can close it manually or we can close it.
+            // Success handling is done via thunk lifecycle, but unwrap throws on error.
+            // If successful, we can show a success message or just let the updated list show.
         } catch (err) {
-            console.error('Update card error:', err);
-            throw err; // Propagate to modal to show error
+            console.error('Update failed', err);
+            throw err; // Re-throw to let modal verify failure
         }
     };
 
@@ -92,7 +64,7 @@ const ManageCards = () => {
                 <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center text-red-600">
                     <p>{error}</p>
                     <button
-                        onClick={fetchCards}
+                        onClick={() => dispatch(fetchCards())}
                         className="mt-4 px-4 py-2 bg-white border border-red-200 rounded-lg text-sm font-medium hover:bg-red-50 transition-colors"
                     >
                         Try Again

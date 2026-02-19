@@ -27,17 +27,17 @@ const CardVisual: React.FC<{ card: CardResponse; className?: string }> = ({ card
             </div>
 
             <div className="z-10 mt-4">
-                <div className="flex items-center space-x-4">
-                    <span className="text-2xl font-mono tracking-widest text-white drop-shadow-md">
+                <div className="flex items-center justify-between w-full mt-2">
+                    <span className="text-xl font-mono tracking-wider text-white drop-shadow-md">
                         {card.cardNumber.substring(0, 4)}
                     </span>
-                    <span className="text-2xl font-mono tracking-widest text-white drop-shadow-md">
+                    <span className="text-xl font-mono tracking-wider text-white drop-shadow-md">
                         ****
                     </span>
-                    <span className="text-2xl font-mono tracking-widest text-white drop-shadow-md">
+                    <span className="text-xl font-mono tracking-wider text-white drop-shadow-md">
                         ****
                     </span>
-                    <span className="text-2xl font-mono tracking-widest text-white drop-shadow-md">
+                    <span className="text-xl font-mono tracking-wider text-white drop-shadow-md">
                         {card.cardNumber.substring(card.cardNumber.length - 4)}
                     </span>
                 </div>
