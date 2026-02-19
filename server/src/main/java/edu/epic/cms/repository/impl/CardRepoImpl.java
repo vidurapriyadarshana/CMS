@@ -1,6 +1,7 @@
 package edu.epic.cms.repository.impl;
 
 import edu.epic.cms.model.Card;
+import edu.epic.cms.model.UpdateCard;
 import edu.epic.cms.repository.CardRepo;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -58,5 +59,21 @@ public class CardRepoImpl implements CardRepo {
         String sql = "SELECT COUNT(*) FROM Card WHERE CardNumber = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, cardNumber);
         return count != null && count > 0;
+    }
+
+    @Override
+    public boolean updateCard(String cardNumber, UpdateCard updateCard) {
+        String sql = "UPDATE Card SET ExpireDate = ?, CreditLimit = ?, CashLimit = ?, " +
+                "AvailableCreditLimit = ?, AvailableCashLimit = ? WHERE CardNumber = ?";
+
+        int result = jdbcTemplate.update(sql,
+                updateCard.getExpireDate(),
+                updateCard.getCreditLimit(),
+                updateCard.getCashLimit(),
+                updateCard.getAvailableCreditLimit(),
+                updateCard.getAvailableCashLimit(),
+                cardNumber);
+
+        return result > 0;
     }
 }

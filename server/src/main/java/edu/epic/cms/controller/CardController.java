@@ -2,8 +2,10 @@ package edu.epic.cms.controller;
 
 import edu.epic.cms.exception.CardCreationException;
 import edu.epic.cms.exception.CardNotFoundException;
+import edu.epic.cms.exception.CardException;
 import edu.epic.cms.model.Card;
 import edu.epic.cms.model.CardResponse;
+import edu.epic.cms.model.UpdateCard;
 import edu.epic.cms.service.CardService;
 import edu.epic.cms.util.CommonResponse;
 import jakarta.validation.Valid;
@@ -39,5 +41,16 @@ public class CardController {
             return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.created("Card created successfully"));
         }
         throw new CardCreationException("Failed to create card");
+    }
+
+    @PutMapping("/{encryptedCardNumber}")
+    public ResponseEntity<CommonResponse> updateCard(
+            @PathVariable String encryptedCardNumber,
+            @Valid @RequestBody UpdateCard updateCard) {
+        boolean isUpdated = cardService.updateCard(encryptedCardNumber, updateCard);
+        if (isUpdated) {
+            return ResponseEntity.ok(CommonResponse.success("Card updated successfully"));
+        }
+        throw new CardException("Failed to update card");
     }
 }

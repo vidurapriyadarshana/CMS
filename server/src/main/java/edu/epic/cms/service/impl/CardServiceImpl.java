@@ -1,9 +1,11 @@
 package edu.epic.cms.service.impl;
 
 import edu.epic.cms.exception.CardCreationException;
+import edu.epic.cms.exception.CardNotFoundException;
 import edu.epic.cms.exception.DuplicateCardException;
 import edu.epic.cms.model.Card;
 import edu.epic.cms.model.CardResponse;
+import edu.epic.cms.model.UpdateCard;
 import edu.epic.cms.repository.CardRepo;
 import edu.epic.cms.service.CardService;
 import edu.epic.cms.util.CardEncryptionUtil;
@@ -65,5 +67,14 @@ public class CardServiceImpl implements CardService {
         card.setCardNumber(encryptedCardNumber);
         
         return cardRepo.createCard(card);
+    }
+
+    @Override
+    public boolean updateCard(String encryptedCardNumber, UpdateCard updateCard) {
+        if (!cardRepo.existsByCardNumber(encryptedCardNumber)) {
+            throw new CardNotFoundException("Card not found");
+        }
+
+        return cardRepo.updateCard(encryptedCardNumber, updateCard);
     }
 }
