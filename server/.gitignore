@@ -38,3 +38,6 @@ build/
 logs/
 *.log
 *.txt.gz
+
+# Project Specific
+AGENTS.md
