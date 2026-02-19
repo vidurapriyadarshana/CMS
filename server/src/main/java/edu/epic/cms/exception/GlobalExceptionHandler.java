@@ -21,6 +21,12 @@ public class GlobalExceptionHandler {
                 .body(CommonResponse.badRequest(ex.getMessage()));
     }
 
+    @ExceptionHandler(DuplicateCardException.class)
+    public ResponseEntity<CommonResponse> handleDuplicateCardException(DuplicateCardException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(CommonResponse.error(HttpStatus.CONFLICT.value(), ex.getMessage()));
+    }
+
     @ExceptionHandler(CardException.class)
     public ResponseEntity<CommonResponse> handleCardException(CardException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
