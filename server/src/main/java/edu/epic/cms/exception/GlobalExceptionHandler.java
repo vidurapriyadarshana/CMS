@@ -47,6 +47,12 @@ public class GlobalExceptionHandler {
                 .body(CommonResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()));
     }
 
+    @ExceptionHandler(OutstandingBalanceException.class)
+    public ResponseEntity<CommonResponse> handleOutstandingBalanceException(OutstandingBalanceException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(CommonResponse.badRequest(ex.getMessage()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonResponse> handleGenericException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
