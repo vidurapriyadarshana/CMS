@@ -4,9 +4,10 @@ import edu.epic.cms.exception.CardCreationException;
 import edu.epic.cms.exception.CardNotFoundException;
 import edu.epic.cms.exception.DuplicateCardException;
 import edu.epic.cms.model.Card;
-import edu.epic.cms.model.CardResponse;
-import edu.epic.cms.model.UpdateCard;
+import edu.epic.cms.api.CardResponse;
+import edu.epic.cms.api.UpdateCard;
 import edu.epic.cms.repository.CardRepo;
+
 import edu.epic.cms.service.CardService;
 import edu.epic.cms.util.CardEncryptionUtil;
 import org.springframework.stereotype.Service;

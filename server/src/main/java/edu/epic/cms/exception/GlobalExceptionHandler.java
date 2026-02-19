@@ -1,6 +1,6 @@
 package edu.epic.cms.exception;
 
-import edu.epic.cms.util.CommonResponse;
+import edu.epic.cms.api.CommonResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

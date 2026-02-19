@@ -1,9 +1,10 @@
 package edu.epic.cms.repository;
 
 import edu.epic.cms.model.Card;
-import edu.epic.cms.model.UpdateCard;
+import edu.epic.cms.api.UpdateCard;
 
 import java.util.List;
+
 
 public interface CardRepo {
     List<Card> getAllCards();

@@ -3,7 +3,7 @@ package edu.epic.cms.controller;
 import edu.epic.cms.exception.CardException;
 import edu.epic.cms.model.CardRequest;
 import edu.epic.cms.service.CardRequestService;
-import edu.epic.cms.util.CommonResponse;
+import edu.epic.cms.api.CommonResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
