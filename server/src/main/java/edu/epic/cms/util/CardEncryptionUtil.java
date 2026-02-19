@@ -32,7 +32,7 @@ public class CardEncryptionUtil {
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.ENCRYPT_MODE, keySpec);
             byte[] encryptedBytes = cipher.doFinal(data.getBytes());
-            return Base64.getEncoder().encodeToString(encryptedBytes);
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(encryptedBytes);
         } catch (Exception e) {
             throw new RuntimeException("Error encrypting data", e);
         }
@@ -43,7 +43,7 @@ public class CardEncryptionUtil {
             SecretKeySpec keySpec = new SecretKeySpec(SECRET_KEY.getBytes(), ALGORITHM);
             Cipher cipher = Cipher.getInstance(ALGORITHM);
             cipher.init(Cipher.DECRYPT_MODE, keySpec);
-            byte[] decryptedBytes = cipher.doFinal(Base64.getDecoder().decode(encryptedData));
+            byte[] decryptedBytes = cipher.doFinal(Base64.getUrlDecoder().decode(encryptedData));
             return new String(decryptedBytes);
         } catch (Exception e) {
             throw new RuntimeException("Error decrypting data", e);
