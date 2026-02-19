@@ -24,6 +24,9 @@ public class CommonResponse {
     public static CommonResponse error(int code, String message) {
         return new CommonResponse(code, "ERROR", message);
     }
+    public static CommonResponse error(int code, Object data) {
+        return new CommonResponse(code, "ERROR", data);
+    }
     public static CommonResponse notFound(String message) {
         return new CommonResponse(404, "NOT_FOUND", message);
     }
