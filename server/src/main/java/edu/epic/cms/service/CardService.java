@@ -11,5 +11,6 @@ public interface CardService {
     boolean createCard(Card card);
     boolean updateCard(String encryptedCardNumber, UpdateCard updateCard);
     CardResponse getCardByEncryptedNumber(String encryptedCardNumber);
+    boolean deleteCard(String encryptedCardNumber);
 }
 

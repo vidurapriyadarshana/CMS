@@ -102,5 +102,13 @@ public class CardServiceImpl implements CardService {
 
         return response;
     }
+
+    @Override
+    public boolean deleteCard(String encryptedCardNumber) {
+        if (!cardRepo.existsByCardNumber(encryptedCardNumber)) {
+            throw new CardNotFoundException("Card not found");
+        }
+        return cardRepo.deleteCard(encryptedCardNumber);
+    }
 }
 

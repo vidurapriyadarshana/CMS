@@ -11,5 +11,6 @@ public interface CardRepo {
     boolean existsByCardNumber(String cardNumber);
     boolean updateCard(String cardNumber, UpdateCard updateCard);
     Card getCardByNumber(String cardNumber);
+    boolean deleteCard(String cardNumber);
 }
 

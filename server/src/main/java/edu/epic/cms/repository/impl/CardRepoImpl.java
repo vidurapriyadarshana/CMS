@@ -99,5 +99,12 @@ public class CardRepoImpl implements CardRepo {
 
         return cards.stream().findFirst().orElse(null);
     }
+
+    @Override
+    public boolean deleteCard(String cardNumber) {
+        String sql = "UPDATE Card SET CardStatus = 'IACT' WHERE CardNumber = ?";
+        int result = jdbcTemplate.update(sql, cardNumber);
+        return result > 0;
+    }
 }
 

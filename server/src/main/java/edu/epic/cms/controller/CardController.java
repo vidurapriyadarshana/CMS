@@ -40,8 +40,16 @@ public class CardController {
         return ResponseEntity.ok(CommonResponse.success(card));
     }
 
-    @PostMapping
+    @DeleteMapping("/{encryptedCardNumber}")
+    public ResponseEntity<CommonResponse> deleteCard(@PathVariable String encryptedCardNumber) {
+        boolean isDeleted = cardService.deleteCard(encryptedCardNumber);
+        if (isDeleted) {
+            return ResponseEntity.ok(CommonResponse.success("Card deleted successfully"));
+        }
+        throw new CardException("Failed to delete card");
+    }
 
+    @PostMapping
     public ResponseEntity<CommonResponse> createCard(@Valid @RequestBody Card card) {
         boolean isCreated = cardService.createCard(card);
         if (isCreated) {
