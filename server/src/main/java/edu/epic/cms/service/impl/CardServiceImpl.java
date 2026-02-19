@@ -3,6 +3,7 @@ package edu.epic.cms.service.impl;
 import edu.epic.cms.exception.CardCreationException;
 import edu.epic.cms.exception.CardNotFoundException;
 import edu.epic.cms.exception.DuplicateCardException;
+import edu.epic.cms.exception.OutstandingBalanceException;
 import edu.epic.cms.model.Card;
 import edu.epic.cms.api.CardResponse;
 import edu.epic.cms.api.UpdateCard;
@@ -112,6 +113,19 @@ public class CardServiceImpl implements CardService {
         if (!cardRepo.existsByCardNumber(encryptedCardNumber)) {
             throw new CardNotFoundException("Card not found");
         }
+
+        if (cardRequestRepo.isCardDeactivated(encryptedCardNumber)) {
+            throw new CardCreationException("Card is deactivated");
+        }
+
+        Card card = cardRepo.getCardByNumber(encryptedCardNumber);
+        if (card != null) {
+            if (!card.getCreditLimit().equals(card.getAvailableCreditLimit())) {
+                cardRequestRepo.markRequestAsFailed(encryptedCardNumber);
+                throw new OutstandingBalanceException("Cannot deactivate card: outstanding balance exists");
+            }
+        }
+
         boolean deleted = cardRepo.deleteCard(encryptedCardNumber);
         if (deleted) {
             cardRequestRepo.markRequestAsDeactivated(encryptedCardNumber);
