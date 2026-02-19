@@ -1,4 +1,4 @@
-package edu.epic.cms.model;
+package edu.epic.cms.api;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

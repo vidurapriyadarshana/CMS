@@ -1,4 +1,4 @@
-package edu.epic.cms.model;
+package edu.epic.cms.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
