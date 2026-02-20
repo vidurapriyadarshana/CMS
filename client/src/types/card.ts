@@ -46,3 +46,19 @@ export interface SendCardRequestPayload {
     cardNumber: string;
     status: string;
 }
+
+export interface StatusType {
+    statusCode: string;
+    description: string;
+}
+
+export interface CardRequestData {
+    requestId: number;
+    requestReasonCode: string;
+    remark: string;
+    cardNumber: string;
+    encryptedCardNumber: string;
+    status: string;
+    createdTime: string; // ISO Date String
+    completionStatus: string;
+}
