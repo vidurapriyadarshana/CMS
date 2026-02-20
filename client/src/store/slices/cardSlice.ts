@@ -1,5 +1,5 @@
 
-import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import type { CardResponse, CommonResponse, UpdateCardRequest, CardRequest } from '../../types/card';
 
