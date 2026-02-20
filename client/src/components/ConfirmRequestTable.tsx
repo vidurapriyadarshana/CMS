@@ -1,4 +1,4 @@
-import { Calendar, Tag, Activity, FileText, CheckCircle2, XCircle, Clock } from 'lucide-react';
+import { Calendar, Tag, Activity, FileText, CheckCircle2, XCircle, Clock, Ban } from 'lucide-react';
 import type { CardRequestData } from '../types/card';
 import { cn } from '../lib/utils';
 
@@ -58,13 +58,15 @@ const ConfirmRequestTable = ({ requests, onChangeStatus }: ConfirmRequestTablePr
                             <td className="px-6 py-4">
                                 <span className={cn(
                                     "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase border border-opacity-50",
-                                    request.completionStatus === 'COMPLETED' || request.completionStatus === 'SUCCESS' ? 'bg-green-50 text-green-700 border-green-200' :
+                                    request.completionStatus === 'COMPLETED' ? 'bg-green-50 text-green-700 border-green-200' :
                                         request.completionStatus === 'FAILED' ? 'bg-red-50 text-red-700 border-red-200' :
-                                            'bg-amber-50 text-amber-700 border-amber-200'
+                                            request.completionStatus === 'DEACTIVATED' ? 'bg-slate-100 text-slate-700 border-slate-200' :
+                                                'bg-amber-50 text-amber-700 border-amber-200'
                                 )}>
-                                    {request.completionStatus === 'COMPLETED' || request.completionStatus === 'SUCCESS' ? <CheckCircle2 className="w-3.5 h-3.5" /> :
+                                    {request.completionStatus === 'COMPLETED' ? <CheckCircle2 className="w-3.5 h-3.5" /> :
                                         request.completionStatus === 'FAILED' ? <XCircle className="w-3.5 h-3.5" /> :
-                                            <Clock className="w-3.5 h-3.5" />}
+                                            request.completionStatus === 'DEACTIVATED' ? <Ban className="w-3.5 h-3.5" /> :
+                                                <Clock className="w-3.5 h-3.5" />}
                                     {request.completionStatus || 'PENDING'}
                                 </span>
                             </td>

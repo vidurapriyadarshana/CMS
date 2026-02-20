@@ -13,6 +13,14 @@ const ConfirmCardRequests = () => {
 
     const [selectedRequest, setSelectedRequest] = useState<CardRequestData | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [filterStatus, setFilterStatus] = useState<string>('ALL');
+
+    const filteredRequests = requests.filter(request => {
+        if (filterStatus === 'ALL') return true;
+        // Default to PENDING if completionStatus is null/undefined
+        const status = request.completionStatus || 'PENDING';
+        return status === filterStatus;
+    });
 
     useEffect(() => {
         dispatch(fetchCardRequests());
@@ -31,6 +39,20 @@ const ConfirmCardRequests = () => {
                     <p className="text-slate-500 mt-2 text-base">Manage and update the status of incoming card requests.</p>
                 </div>
                 <div className="text-right flex items-center gap-6">
+                    <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-xl border border-slate-200 shadow-sm">
+                        <label className="text-sm font-semibold text-slate-600">Filter By:</label>
+                        <select
+                            value={filterStatus}
+                            onChange={(e) => setFilterStatus(e.target.value)}
+                            className="bg-transparent text-sm font-medium text-slate-900 focus:outline-none cursor-pointer"
+                        >
+                            <option value="ALL">All Requests</option>
+                            <option value="PENDING">Pending</option>
+                            <option value="COMPLETED">Completed</option>
+                            <option value="FAILED">Failed</option>
+                            <option value="DEACTIVATED">Deactivated</option>
+                        </select>
+                    </div>
                     <div className="bg-white px-5 py-2.5 rounded-xl border border-slate-200 shadow-sm flex flex-col items-end">
                         <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Total Requests</span>
                         <p className="text-2xl font-black text-slate-800 leading-none">{requests.length}</p>
@@ -54,7 +76,7 @@ const ConfirmCardRequests = () => {
                 </div>
             ) : (
                 <ConfirmRequestTable
-                    requests={requests}
+                    requests={filteredRequests}
                     onChangeStatus={handleOpenStatusModal}
                 />
             )}
