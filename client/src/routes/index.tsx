@@ -10,7 +10,6 @@ export const AppRoutes = () => {
             path: '/',
             element: <Layout />,
             children: [
-                { path: 'manage-cards', element: <ManageCards /> },
                 { path: 'card-request', element: <CardRequest /> },
                 { path: 'confirm-card-requests', element: <ConfirmCardRequests /> },
                 { path: '/', element: <ManageCards /> }, // Default redirect or home page

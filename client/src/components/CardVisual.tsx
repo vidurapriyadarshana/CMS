@@ -9,7 +9,7 @@ import { cn } from '../lib/utils'; // Assuming cn exists or I should use a simpl
 const CardVisual: React.FC<{ card: CardResponse; className?: string }> = ({ card, className }) => {
     // Basic gradient background for "Premium" look
     return (
-        <div className={cn("relative w-96 h-56 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white shadow-2xl p-6 flex flex-col justify-between border border-white/10", className)}>
+        <div className={cn("relative w-96 h-56 rounded-2xl bg-gradient-to-br from-blue-700 via-blue-800 to-blue-950 text-white shadow-xl p-6 flex flex-col justify-between border border-blue-500/30 overflow-hidden", className)}>
             {/* Background Texture/Effect */}
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 rounded-2xl pointer-events-none"></div>
 

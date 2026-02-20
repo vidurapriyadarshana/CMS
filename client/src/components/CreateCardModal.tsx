@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { Loader2, X } from 'lucide-react';
-import { cn } from '../lib/utils';
 import type { CardRequest } from '../types/card';
 
 interface CreateCardModalProps {
@@ -29,7 +28,12 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({ isOpen, onClose, onCr
         setIsLoading(true);
         setError(null);
         try {
-            await onCreate(formData);
+            // Remove spaces from card number before sending to API
+            const submissionData = {
+                ...formData,
+                cardNumber: formData.cardNumber.replace(/\s/g, '')
+            };
+            await onCreate(submissionData);
             onClose();
         } catch (err: any) {
             setError(err.message || 'Failed to create card');
@@ -40,6 +44,19 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({ isOpen, onClose, onCr
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
+
+        if (name === 'cardNumber') {
+            // Remove non-digits
+            const onlyNums = value.replace(/\D/g, '');
+            // Limit to 16 digits
+            const truncated = onlyNums.slice(0, 16);
+            // Format as 4x4 with spaces
+            const formatted = truncated.replace(/(\d{4})(?=\d)/g, '$1 ');
+
+            setFormData(prev => ({ ...prev, cardNumber: formatted }));
+            return;
+        }
+
         setFormData(prev => ({
             ...prev,
             [name]: name.includes('Limit') ? Number(value) : value
@@ -70,12 +87,12 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({ isOpen, onClose, onCr
                                 type="text"
                                 name="cardNumber"
                                 required
-                                pattern="[0-9]{16}"
-                                maxLength={16}
+                                pattern="[\d\s]{19}"
+                                maxLength={19}
                                 value={formData.cardNumber}
                                 onChange={handleChange}
-                                placeholder="1234567890123456"
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                                placeholder="1234 5678 9012 3456"
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all font-mono"
                             />
                             <p className="text-xs text-slate-500 mt-1">16 digits required</p>
                         </div>
@@ -104,6 +121,7 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({ isOpen, onClose, onCr
                                     name="creditLimit"
                                     required
                                     min="0"
+                                    max="10000000"
                                     value={formData.creditLimit}
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
@@ -116,6 +134,7 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({ isOpen, onClose, onCr
                                     name="cashLimit"
                                     required
                                     min="0"
+                                    max={formData.creditLimit}
                                     value={formData.cashLimit}
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
@@ -133,6 +152,7 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({ isOpen, onClose, onCr
                                     name="availableCreditLimit"
                                     required
                                     min="0"
+                                    max={formData.creditLimit}
                                     value={formData.availableCreditLimit}
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
@@ -145,6 +165,7 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({ isOpen, onClose, onCr
                                     name="availableCashLimit"
                                     required
                                     min="0"
+                                    max={formData.cashLimit}
                                     value={formData.availableCashLimit}
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"

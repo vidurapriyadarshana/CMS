@@ -38,14 +38,14 @@ const CardRequest = () => {
 
             {loading ? (
                 <div className="flex h-96 items-center justify-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+                    <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
                 </div>
             ) : error ? (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center text-red-600">
-                    <p>{error}</p>
+                <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center text-red-600 shadow-sm">
+                    <p className="text-lg font-medium">{error}</p>
                     <button
                         onClick={() => dispatch(fetchCards())}
-                        className="mt-4 px-4 py-2 bg-white border border-red-200 rounded-lg text-sm font-medium hover:bg-red-50 transition-colors"
+                        className="mt-6 px-6 py-2.5 bg-white border border-red-200 rounded-xl text-sm font-semibold hover:bg-red-50 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                     >
                         Try Again
                     </button>
@@ -53,7 +53,7 @@ const CardRequest = () => {
             ) : (
                 <CardTable
                     cards={cards}
-                    onCardClick={() => { }}
+                    onCardClick={handleSendRequest}
                     onRequest={handleSendRequest}
                 />
             )}

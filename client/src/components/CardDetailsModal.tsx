@@ -115,6 +115,9 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({ card, isOpen, onClo
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                                     placeholder="MM/YY"
+                                    required
+                                    pattern="(0[1-9]|1[0-2])\/[0-9]{2}"
+                                    maxLength={5}
                                 />
                             </div>
                             <div className="space-y-2">
@@ -124,6 +127,8 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({ card, isOpen, onClo
                                     name="creditLimit"
                                     value={formData.creditLimit}
                                     onChange={handleChange}
+                                    min="0"
+                                    max="10000000"
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                                 />
                             </div>
@@ -134,6 +139,8 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({ card, isOpen, onClo
                                     name="cashLimit"
                                     value={formData.cashLimit}
                                     onChange={handleChange}
+                                    min="0"
+                                    max={formData.creditLimit}
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                                 />
                             </div>
@@ -144,6 +151,8 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({ card, isOpen, onClo
                                     name="availableCreditLimit"
                                     value={formData.availableCreditLimit}
                                     onChange={handleChange}
+                                    min="0"
+                                    max={formData.creditLimit}
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                                 />
                             </div>
@@ -154,6 +163,8 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({ card, isOpen, onClo
                                     name="availableCashLimit"
                                     value={formData.availableCashLimit}
                                     onChange={handleChange}
+                                    min="0"
+                                    max={formData.cashLimit}
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                                 />
                             </div>

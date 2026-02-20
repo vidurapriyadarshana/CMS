@@ -87,34 +87,34 @@ const ManageCards = () => {
         <div className="p-8 max-w-[1600px] mx-auto">
             <div className="mb-8 flex justify-between items-end">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Manage Cards</h1>
-                    <p className="text-slate-500 mt-2">View and manage all customer credit cards.</p>
+                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Manage Cards</h1>
+                    <p className="text-slate-500 mt-2 text-base">View and manage all customer credit cards.</p>
                 </div>
-                <div className="text-right flex items-center gap-4">
+                <div className="text-right flex items-center gap-6">
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm"
+                        className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:scale-95"
                     >
-                        <Plus className="w-4 h-4" />
+                        <Plus className="w-5 h-5" />
                         Create New Card
                     </button>
-                    <div>
-                        <span className="text-sm font-medium text-slate-500 block">Total Cards</span>
-                        <p className="text-2xl font-bold text-slate-900 leading-none">{cards.length}</p>
+                    <div className="bg-white px-5 py-2.5 rounded-xl border border-slate-200 shadow-sm flex flex-col items-end">
+                        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Total Cards</span>
+                        <p className="text-2xl font-black text-slate-800 leading-none">{cards.length}</p>
                     </div>
                 </div>
             </div>
 
             {loading ? (
                 <div className="flex h-96 items-center justify-center">
-                    <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+                    <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
                 </div>
             ) : error ? (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center text-red-600">
-                    <p>{error}</p>
+                <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center text-red-600 shadow-sm">
+                    <p className="text-lg font-medium">{error}</p>
                     <button
                         onClick={() => dispatch(fetchCards())}
-                        className="mt-4 px-4 py-2 bg-white border border-red-200 rounded-lg text-sm font-medium hover:bg-red-50 transition-colors"
+                        className="mt-6 px-6 py-2.5 bg-white border border-red-200 rounded-xl text-sm font-semibold hover:bg-red-50 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                     >
                         Try Again
                     </button>

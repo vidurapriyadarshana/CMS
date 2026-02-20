@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Loader2, X } from 'lucide-react';
 import axios from 'axios';
 import { toast } from 'sonner';
-import type { CardResponse, CardRequestType, SendCardRequestPayload, CommonResponse } from '../types/card';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchRequestTypes } from '../store/slices/optionsSlice';
+import type { RootState, AppDispatch } from '../store/index';
+import type { CardResponse, SendCardRequestPayload, CommonResponse } from '../types/card';
+import CardVisual from './CardVisual';
 
 interface SendRequestModalProps {
     isOpen: boolean;
@@ -11,20 +15,21 @@ interface SendRequestModalProps {
 }
 
 const SendRequestModal: React.FC<SendRequestModalProps> = ({ isOpen, onClose, card }) => {
-    const [isLoading, setIsLoading] = useState(false);
-    const [requestTypes, setRequestTypes] = useState<CardRequestType[]>([]);
-    const [isFetchingTypes, setIsFetchingTypes] = useState(false);
+    const dispatch = useDispatch<AppDispatch>();
+    const { requestTypes, loadingRequestTypes } = useSelector((state: RootState) => state.options);
 
+    const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
         requestReasonCode: '',
         remark: ''
     });
-
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         if (isOpen) {
-            fetchRequestTypes();
+            if (requestTypes.length === 0) {
+                dispatch(fetchRequestTypes());
+            }
             // Reset form when modal opens
             setFormData({
                 requestReasonCode: '',
@@ -32,27 +37,13 @@ const SendRequestModal: React.FC<SendRequestModalProps> = ({ isOpen, onClose, ca
             });
             setError(null);
         }
-    }, [isOpen]);
+    }, [isOpen, dispatch, requestTypes.length]);
 
-    const fetchRequestTypes = async () => {
-        setIsFetchingTypes(true);
-        try {
-            const response = await axios.get<CommonResponse<CardRequestType[]>>('/card-request-types');
-            if (response.data.code === 200 && Array.isArray(response.data.data)) {
-                setRequestTypes(response.data.data);
-                if (response.data.data.length > 0) {
-                    setFormData(prev => ({ ...prev, requestReasonCode: response.data.data[0].code }));
-                }
-            } else {
-                toast.error(response.data.status || 'Failed to load request types');
-            }
-        } catch (err: any) {
-            console.error('Error fetching request types', err);
-            toast.error(err.response?.data?.status || err.message || 'Failed to load request types');
-        } finally {
-            setIsFetchingTypes(false);
+    useEffect(() => {
+        if (isOpen && requestTypes.length > 0 && !formData.requestReasonCode) {
+            setFormData(prev => ({ ...prev, requestReasonCode: requestTypes[0].code }));
         }
-    };
+    }, [isOpen, requestTypes, formData.requestReasonCode]);
 
     if (!isOpen || !card) return null;
 
@@ -119,15 +110,16 @@ const SendRequestModal: React.FC<SendRequestModalProps> = ({ isOpen, onClose, ca
                         </div>
                     )}
 
-                    <div className="bg-slate-50 p-3 rounded-lg border border-slate-100 mb-4">
-                        <p className="text-sm text-slate-500">Selected Card</p>
-                        <p className="font-mono font-medium text-slate-900">{card.cardNumber}</p>
+                    <div className="flex justify-center mb-6 overflow-hidden">
+                        <div className="scale-[0.80] origin-top">
+                            <CardVisual card={card} />
+                        </div>
                     </div>
 
-                    <div className="space-y-4">
+                    <div className="space-y-4 -mt-8">
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-1">Request Reason</label>
-                            {isFetchingTypes ? (
+                            {loadingRequestTypes ? (
                                 <div className="flex items-center gap-2 px-3 py-2 border border-slate-300 rounded-lg bg-slate-50 text-slate-500 text-sm">
                                     <Loader2 className="w-4 h-4 animate-spin" />
                                     Loading options...
@@ -174,7 +166,7 @@ const SendRequestModal: React.FC<SendRequestModalProps> = ({ isOpen, onClose, ca
                         </button>
                         <button
                             type="submit"
-                            disabled={isLoading || isFetchingTypes}
+                            disabled={isLoading || loadingRequestTypes}
                             className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center disabled:opacity-50"
                         >
                             {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Send Request'}
