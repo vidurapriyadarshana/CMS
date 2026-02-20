@@ -1,11 +1,15 @@
 
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { CardResponse, UpdateCardRequest } from '../types/card';
-import { fetchCards, updateCard, clearError } from '../store/slices/cardSlice';
+import { Plus } from 'lucide-react';
+import { toast } from 'sonner';
+import type { CardResponse, UpdateCardRequest, CardRequest } from '../types/card';
+import { fetchCards, updateCard, createCard, deleteCard, clearError } from '../store/slices/cardSlice';
 import type { RootState, AppDispatch } from '../store/index';
 import CardTable from '../components/CardTable';
 import CardDetailsModal from '../components/CardDetailsModal';
+import CreateCardModal from '../components/CreateCardModal';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import { Loader2 } from 'lucide-react';
 
 const ManageCards = () => {
@@ -14,6 +18,11 @@ const ManageCards = () => {
 
     const [selectedCard, setSelectedCard] = useState<CardResponse | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+    // Delete state
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [cardToDelete, setCardToDelete] = useState<string | null>(null);
 
     useEffect(() => {
         dispatch(fetchCards());
@@ -34,12 +43,43 @@ const ManageCards = () => {
     const handleUpdateCard = async (encryptedCardNumber: string, data: UpdateCardRequest) => {
         try {
             await dispatch(updateCard({ encryptedCardNumber, data })).unwrap();
-            // No need to close modal here, user can close it manually or we can close it.
-            // Success handling is done via thunk lifecycle, but unwrap throws on error.
-            // If successful, we can show a success message or just let the updated list show.
+            toast.success('Card updated successfully');
         } catch (err) {
             console.error('Update failed', err);
-            throw err; // Re-throw to let modal verify failure
+            toast.error(typeof err === 'string' ? err : 'Failed to update card');
+            throw err;
+        }
+    };
+
+    const handleCreateCard = async (data: CardRequest) => {
+        try {
+            await dispatch(createCard(data)).unwrap();
+            toast.success('Card created successfully');
+            setIsCreateModalOpen(false);
+        } catch (err) {
+            console.error('Create failed', err);
+            toast.error(typeof err === 'string' ? err : 'Failed to create card');
+            // Don't throw if we want modal to stay open on error, but CreateCardModal handles error too? 
+            // If CreateCardModal handles it, we should throw. 
+            throw err;
+        }
+    };
+
+    const confirmDeleteCard = (encryptedCardNumber: string) => {
+        setCardToDelete(encryptedCardNumber);
+        setIsDeleteModalOpen(true);
+    };
+
+    const handleDeleteCard = async () => {
+        if (!cardToDelete) return;
+        try {
+            await dispatch(deleteCard(cardToDelete)).unwrap();
+            toast.success('Card deleted successfully');
+            setIsDeleteModalOpen(false);
+            setCardToDelete(null);
+        } catch (err) {
+            console.error('Delete failed', err);
+            toast.error(typeof err === 'string' ? err : 'Failed to delete card');
         }
     };
 
@@ -50,9 +90,18 @@ const ManageCards = () => {
                     <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Manage Cards</h1>
                     <p className="text-slate-500 mt-2">View and manage all customer credit cards.</p>
                 </div>
-                <div className="text-right">
-                    <span className="text-sm font-medium text-slate-500">Total Cards</span>
-                    <p className="text-2xl font-bold text-slate-900 leading-none">{cards.length}</p>
+                <div className="text-right flex items-center gap-4">
+                    <button
+                        onClick={() => setIsCreateModalOpen(true)}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors shadow-sm"
+                    >
+                        <Plus className="w-4 h-4" />
+                        Create New Card
+                    </button>
+                    <div>
+                        <span className="text-sm font-medium text-slate-500 block">Total Cards</span>
+                        <p className="text-2xl font-bold text-slate-900 leading-none">{cards.length}</p>
+                    </div>
                 </div>
             </div>
 
@@ -71,7 +120,7 @@ const ManageCards = () => {
                     </button>
                 </div>
             ) : (
-                <CardTable cards={cards} onCardClick={handleCardClick} />
+                <CardTable cards={cards} onCardClick={handleCardClick} onDelete={confirmDeleteCard} />
             )}
 
             {selectedCard && (
@@ -82,6 +131,18 @@ const ManageCards = () => {
                     onUpdate={handleUpdateCard}
                 />
             )}
+
+            <CreateCardModal
+                isOpen={isCreateModalOpen}
+                onClose={() => setIsCreateModalOpen(false)}
+                onCreate={handleCreateCard}
+            />
+
+            <DeleteConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDeleteCard}
+            />
         </div>
     );
 };

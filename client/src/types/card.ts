@@ -11,6 +11,15 @@ export interface CardResponse {
     lastUpdateTime: string; // ISO Date string
 }
 
+export interface CardRequest {
+    cardNumber: string;
+    expireDate: string; // "MM/YY"
+    creditLimit: number;
+    cashLimit: number;
+    availableCreditLimit: number;
+    availableCashLimit: number;
+}
+
 export interface UpdateCardRequest {
     expireDate: string; // "MM/YY"
     creditLimit: number;
@@ -24,4 +33,16 @@ export interface CommonResponse<T> {
     status: string;
     data: T;
     message?: string;
+}
+
+export interface CardRequestType {
+    code: string;
+    description: string;
+}
+
+export interface SendCardRequestPayload {
+    requestReasonCode: string;
+    remark: string;
+    cardNumber: string;
+    status: string;
 }

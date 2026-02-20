@@ -1,7 +1,7 @@
 
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import axios from 'axios';
-import type { CardResponse, CommonResponse, UpdateCardRequest } from '../../types/card';
+import type { CardResponse, CommonResponse, UpdateCardRequest, CardRequest } from '../../types/card';
 
 interface CardState {
     cards: CardResponse[];
@@ -32,6 +32,12 @@ export const fetchCards = createAsyncThunk(
                 return rejectWithValue(response.data.status || 'Failed to fetch cards');
             }
         } catch (err: any) {
+            // Check if it's an axios error with a response
+            if (err.response && err.response.data) {
+                // User says message is in 'data' field: { code: 400, data: "Message" }
+                const serverMessage = err.response.data.data || err.response.data.status;
+                return rejectWithValue(serverMessage || 'Error fetching cards');
+            }
             return rejectWithValue(err.message || 'Error fetching cards');
         }
     }
@@ -51,10 +57,60 @@ export const updateCard = createAsyncThunk(
                 return rejectWithValue(response.data.status || 'Update failed');
             }
         } catch (err: any) {
+            if (err.response && err.response.data) {
+                const serverMessage = err.response.data.data || err.response.data.status;
+                return rejectWithValue(serverMessage || 'Error updating card');
+            }
             return rejectWithValue(err.message || 'Error updating card');
         }
     }
 );
+
+// ... imports
+
+export const createCard = createAsyncThunk(
+    'cards/createCard',
+    async (cardData: CardRequest, { rejectWithValue, dispatch }) => {
+        try {
+            const response = await axios.post<CommonResponse<string>>('/cards', cardData);
+            if (response.data.code === 201) { // Assuming 201 Created
+                dispatch(fetchCards());
+                return response.data.message;
+            } else {
+                return rejectWithValue(response.data.status || 'Creation failed');
+            }
+        } catch (err: any) {
+            if (err.response && err.response.data) {
+                const serverMessage = err.response.data.data || err.response.data.status;
+                return rejectWithValue(serverMessage || 'Error creating card');
+            }
+            return rejectWithValue(err.message || 'Error creating card');
+        }
+    }
+);
+
+export const deleteCard = createAsyncThunk(
+    'cards/deleteCard',
+    async (encryptedCardNumber: string, { rejectWithValue, dispatch }) => {
+        try {
+            const response = await axios.delete<CommonResponse<string>>(`/cards/${encryptedCardNumber}`);
+            if (response.data.code === 200) {
+                dispatch(fetchCards());
+                return response.data.message;
+            } else {
+                return rejectWithValue(response.data.status || 'Deletion failed');
+            }
+        } catch (err: any) {
+            if (err.response && err.response.data) {
+                const serverMessage = err.response.data.data || err.response.data.status;
+                return rejectWithValue(serverMessage || 'Error deleting card');
+            }
+            return rejectWithValue(err.message || 'Error deleting card');
+        }
+    }
+);
+
+// ... updateCard thunk ...
 
 const cardSlice = createSlice({
     name: 'cards',
@@ -68,7 +124,10 @@ const cardSlice = createSlice({
         builder
             // Fetch Cards
             .addCase(fetchCards.pending, (state) => {
-                state.loading = true;
+                // Only show global loading spinner if we have no data
+                if (state.cards.length === 0) {
+                    state.loading = true;
+                }
                 state.error = null;
             })
             .addCase(fetchCards.fulfilled, (state, action) => {
@@ -77,25 +136,17 @@ const cardSlice = createSlice({
             })
             .addCase(fetchCards.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload as string;
-            })
-            // Update Card
-            .addCase(updateCard.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(updateCard.fulfilled, (state) => {
-                state.loading = false;
-                // Fetch is triggered by thunk, so we just stop loading here.
-                // Ideally, if we want seamless UI, we might optimistically update or 
-                // wait for fetch. Since we dispatch fetchCards inside updateCard, 
-                // the fetchCards.pending will trigger immediately after this or concurrently.
-                // Actually, dispatching inside thunk means a new action cycle starts.
-            })
-            .addCase(updateCard.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload as string;
+                // Only set global error if we have no data to show
+                if (state.cards.length === 0) {
+                    state.error = action.payload as string;
+                }
+                // If we have data, we might want to show a toast instead, 
+                // but the thunk doesn't dispatch a toast. 
+                // For now, keeping the table visible is the priority.
             });
+        // We removed Create/Update/Delete handlers because they are handled locally
+        // via unwrap() and toasts, and we don't want them to trigger global loading/error states
+        // that would hide the table.
     },
 });
 

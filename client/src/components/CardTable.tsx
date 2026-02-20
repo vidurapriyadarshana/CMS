@@ -1,14 +1,16 @@
 
-import React from 'react';
+import { CreditCard, Calendar, Trash2, Send } from 'lucide-react';
 import type { CardResponse } from '../types/card';
-import { Calendar, CreditCard } from 'lucide-react';
+import { cn } from '../lib/utils';
 
 interface CardTableProps {
     cards: CardResponse[];
     onCardClick: (card: CardResponse) => void;
+    onDelete?: (encryptedCardNumber: string) => void;
+    onRequest?: (card: CardResponse) => void;
 }
 
-const CardTable: React.FC<CardTableProps> = ({ cards, onCardClick }) => {
+const CardTable = ({ cards, onCardClick, onDelete, onRequest }: CardTableProps) => {
     return (
         <div className="overflow-x-auto rounded-xl border border-slate-200 shadow-sm bg-white">
             <table className="w-full text-sm text-left">
@@ -20,11 +22,12 @@ const CardTable: React.FC<CardTableProps> = ({ cards, onCardClick }) => {
                         <th className="px-6 py-4 text-right">Credit Limit</th>
                         <th className="px-6 py-4 text-right">Cash Limit</th>
                         <th className="px-6 py-4 text-right">Avail. Credit</th>
-                        <th className="px-6 py-4 text-right">Avail. Cash</th>
-                        <th className="px-6 py-4 text-right">Last Updated</th>
+                        <th className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Avail. Cash</th>
+                        <th className="px-6 py-4 text-right text-xs font-semibold text-slate-500 uppercase tracking-wider">Last Update</th>
+                        <th className="px-6 py-4 text-center text-xs font-semibold text-slate-500 uppercase tracking-wider">Actions</th>
                     </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="bg-white divide-y divide-slate-100">
                     {cards.map((card) => (
                         <tr
                             key={card.encryptedCardNumber}
@@ -63,6 +66,34 @@ const CardTable: React.FC<CardTableProps> = ({ cards, onCardClick }) => {
                             </td>
                             <td className="px-6 py-4 text-right text-slate-400 text-xs">
                                 {card.lastUpdateTime ? new Date(card.lastUpdateTime).toLocaleDateString() : 'N/A'}
+                            </td>
+                            <td className="px-6 py-4 text-center">
+                                <div className="flex items-center justify-center gap-2">
+                                    {onRequest && (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onRequest(card);
+                                            }}
+                                            className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-all"
+                                            title="Send Request"
+                                        >
+                                            <Send className="w-4 h-4" />
+                                        </button>
+                                    )}
+                                    {onDelete && (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                onDelete(card.encryptedCardNumber);
+                                            }}
+                                            className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                                            title="Delete Card"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    )}
+                                </div>
                             </td>
                         </tr>
                     ))}
