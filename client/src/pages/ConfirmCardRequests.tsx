@@ -32,7 +32,7 @@ const ConfirmCardRequests = () => {
     };
 
     return (
-        <div className="p-8 max-w-[1600px] mx-auto">
+        <div className="p-8 max-w-400 mx-auto">
             <div className="mb-8 flex justify-between items-end">
                 <div>
                     <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Confirm Requests</h1>

@@ -9,7 +9,7 @@ import { cn } from '../lib/utils'; // Assuming cn exists or I should use a simpl
 const CardVisual: React.FC<{ card: CardResponse; className?: string }> = ({ card, className }) => {
     // Basic gradient background for "Premium" look
     return (
-        <div className={cn("relative w-96 h-56 rounded-2xl bg-gradient-to-br from-blue-700 via-blue-800 to-blue-950 text-white shadow-xl p-6 flex flex-col justify-between border border-blue-500/30 overflow-hidden", className)}>
+        <div className={cn("relative w-96 h-56 rounded-2xl bg-linear-to-br from-blue-700 via-blue-800 to-blue-950 text-white shadow-xl p-6 flex flex-col justify-between border border-blue-500/30 overflow-hidden", className)}>
             {/* Background Texture/Effect */}
             <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 rounded-2xl pointer-events-none"></div>
 
@@ -19,9 +19,9 @@ const CardVisual: React.FC<{ card: CardResponse; className?: string }> = ({ card
                     <span className="text-xs text-white/50 uppercase tracking-widest mt-1">Platinum Credit</span>
                 </div>
                 {/* Chip Icon Simulation */}
-                <div className="w-12 h-9 bg-gradient-to-r from-yellow-200 to-yellow-500 rounded-md border border-yellow-600 shadow-inner flex items-center justify-center relative overflow-hidden">
-                    <div className="absolute w-full h-[1px] bg-yellow-700 top-1/2 -translate-y-1/2"></div>
-                    <div className="absolute h-full w-[1px] bg-yellow-700 left-1/2 -translate-x-1/2"></div>
+                <div className="w-12 h-9 bg-linear-to-r from-yellow-200 to-yellow-500 rounded-md border border-yellow-600 shadow-inner flex items-center justify-center relative overflow-hidden">
+                    <div className="absolute w-full h-px bg-yellow-700 top-1/2 -translate-y-1/2"></div>
+                    <div className="absolute h-full w-px bg-yellow-700 left-1/2 -translate-x-1/2"></div>
                     <div className="w-8 h-6 border border-yellow-700 rounded-sm"></div>
                 </div>
             </div>
