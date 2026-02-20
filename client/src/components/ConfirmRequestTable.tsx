@@ -18,7 +18,7 @@ const ConfirmRequestTable = ({ requests, onChangeStatus }: ConfirmRequestTablePr
                         <th className="px-6 py-4">Remark</th>
                         <th className="px-6 py-4">Current Status</th>
                         <th className="px-6 py-4">Created Time</th>
-                        <th className="px-6 py-4">Completion Status</th>
+                        <th className="px-6 py-4">Request Status</th>
                         <th className="px-6 py-4 text-center">Actions</th>
                     </tr>
                 </thead>
