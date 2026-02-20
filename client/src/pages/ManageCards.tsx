@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Plus } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import type { CardResponse, UpdateCardRequest, CardRequest } from '../types/card';
 import { fetchCards, updateCard, createCard, deleteCard, clearError } from '../store/slices/cardSlice';
@@ -19,10 +19,17 @@ const ManageCards = () => {
     const [selectedCard, setSelectedCard] = useState<CardResponse | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
     // Delete state
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [cardToDelete, setCardToDelete] = useState<string | null>(null);
+
+    const filteredCards = cards.filter(card => {
+        if (!searchTerm) return true;
+        const last4 = card.cardNumber.slice(-4);
+        return last4.includes(searchTerm);
+    });
 
     useEffect(() => {
         dispatch(fetchCards());
@@ -91,6 +98,18 @@ const ManageCards = () => {
                     <p className="text-slate-500 mt-2 text-base">View and manage all customer credit cards.</p>
                 </div>
                 <div className="text-right flex items-center gap-6">
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <Search className="h-4 w-4 text-slate-400" />
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Search last 4 digits..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                            className="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm w-[220px]"
+                        />
+                    </div>
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
                         className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:scale-95"
@@ -120,7 +139,7 @@ const ManageCards = () => {
                     </button>
                 </div>
             ) : (
-                <CardTable cards={cards} onCardClick={handleCardClick} onDelete={confirmDeleteCard} />
+                <CardTable cards={filteredCards} onCardClick={handleCardClick} onDelete={confirmDeleteCard} />
             )}
 
             {selectedCard && (

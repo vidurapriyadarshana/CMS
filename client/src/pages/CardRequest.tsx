@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Search } from 'lucide-react';
 import type { CardResponse } from '../types/card';
 import { fetchCards, clearError } from '../store/slices/cardSlice';
 import type { RootState, AppDispatch } from '../store/index';
@@ -13,6 +13,13 @@ const CardRequest = () => {
 
     const [selectedCard, setSelectedCard] = useState<CardResponse | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+
+    const filteredCards = cards.filter(card => {
+        if (!searchTerm) return true;
+        const last4 = card.cardNumber.slice(-4);
+        return last4.includes(searchTerm);
+    });
 
     useEffect(() => {
         dispatch(fetchCards());
@@ -31,9 +38,25 @@ const CardRequest = () => {
 
     return (
         <div className="p-8 max-w-[1600px] mx-auto">
-            <div className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Card Requests</h1>
-                <p className="text-slate-500 mt-2">Select a card to send a new request.</p>
+            <div className="mb-8 flex justify-between items-end">
+                <div>
+                    <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">Card Requests</h1>
+                    <p className="text-slate-500 mt-2 text-base">Select a card to send a new request.</p>
+                </div>
+                <div className="text-right flex items-center gap-6">
+                    <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <Search className="h-4 w-4 text-slate-400" />
+                        </div>
+                        <input
+                            type="text"
+                            placeholder="Search last 4 digits..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                            className="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm w-[220px]"
+                        />
+                    </div>
+                </div>
             </div>
 
             {loading ? (
@@ -52,7 +75,7 @@ const CardRequest = () => {
                 </div>
             ) : (
                 <CardTable
-                    cards={cards}
+                    cards={filteredCards}
                     onCardClick={handleSendRequest}
                     onRequest={handleSendRequest}
                 />
