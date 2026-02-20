@@ -1,6 +1,7 @@
-
 import React, { useState } from 'react';
 import { Loader2, X } from 'lucide-react';
+import axios from 'axios';
+import JSEncrypt from 'jsencrypt';
 import type { CardRequest } from '../types/card';
 
 interface CreateCardModalProps {
@@ -28,10 +29,27 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({ isOpen, onClose, onCr
         setIsLoading(true);
         setError(null);
         try {
-            // Remove spaces from card number before sending to API
+            // 1. Fetch the Public Key from the server
+            const keyResponse = await axios.get('/encryption/public-key');
+            const publicKeyBase64 = keyResponse.data?.data?.publicKey;
+
+            if (!publicKeyBase64) {
+                throw new Error("Could not retrieve encryption key from server");
+            }
+
+            // 2. Encrypt the raw card number using RSA
+            const encryptor = new JSEncrypt();
+            encryptor.setPublicKey(publicKeyBase64);
+            const encryptedCardNumber = encryptor.encrypt(formData.cardNumber.replace(/\s/g, ''));
+
+            if (!encryptedCardNumber) {
+                throw new Error("Encryption failed in the browser");
+            }
+
+            // 3. Submit the encrypted payload
             const submissionData = {
                 ...formData,
-                cardNumber: formData.cardNumber.replace(/\s/g, '')
+                cardNumber: encryptedCardNumber
             };
             await onCreate(submissionData);
             onClose();
