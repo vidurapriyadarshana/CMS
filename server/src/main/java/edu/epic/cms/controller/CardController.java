@@ -5,6 +5,7 @@ import edu.epic.cms.exception.CardNotFoundException;
 import edu.epic.cms.exception.CardException;
 import edu.epic.cms.model.Card;
 import edu.epic.cms.api.CardResponse;
+import edu.epic.cms.api.CreateCardRequest;
 import edu.epic.cms.api.UpdateCard;
 import edu.epic.cms.service.CardService;
 import edu.epic.cms.api.CommonResponse;
@@ -51,8 +52,8 @@ public class CardController {
     }
 
     @PostMapping
-    public ResponseEntity<CommonResponse> createCard(@Valid @RequestBody Card card) {
-        boolean isCreated = cardService.createCard(card);
+    public ResponseEntity<CommonResponse> createCard(@Valid @RequestBody CreateCardRequest createCardRequest) {
+        boolean isCreated = cardService.createCard(createCardRequest);
         if (isCreated) {
             return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.created("Card created successfully"));
         }

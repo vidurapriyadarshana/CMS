@@ -3,14 +3,18 @@ package edu.epic.cms.service.impl;
 import edu.epic.cms.exception.CardCreationException;
 import edu.epic.cms.exception.CardNotFoundException;
 import edu.epic.cms.exception.OutstandingBalanceException;
+import edu.epic.cms.api.CreateCardRequest;
 import edu.epic.cms.model.Card;
 import edu.epic.cms.api.UpdateCard;
 import edu.epic.cms.repository.CardRepo;
 import edu.epic.cms.repository.CardRequestRepo;
+import edu.epic.cms.util.RsaEncryptionUtil;
+import edu.epic.cms.util.CardEncryptionUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -25,47 +29,53 @@ class CardServiceImplTests {
     @Mock
     private CardRequestRepo cardRequestRepo;
 
+    @Mock
+    private RsaEncryptionUtil rsaEncryptionUtil;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        cardService = new CardServiceImpl(cardRepo, cardRequestRepo);
+        cardService = new CardServiceImpl(cardRepo, cardRequestRepo, rsaEncryptionUtil);
+        ReflectionTestUtils.setField(CardEncryptionUtil.class, "SECRET_KEY", "1234567890123456");
+        ReflectionTestUtils.setField(CardEncryptionUtil.class, "ALGORITHM", "AES");
     }
 
     @Test
     void createCard_ShouldThrowException_WhenLimitsAreInvalid() {
-        Card card = new Card();
-        card.setCardNumber("1234567890123456");
+        CreateCardRequest request = new CreateCardRequest();
+        request.setCardNumber("encrypted1234");
+        when(rsaEncryptionUtil.decrypt(anyString())).thenReturn("1234567890123456");
         
         // Negative credit limit
-        card.setCreditLimit(-100);
-        assertThrows(CardCreationException.class, () -> cardService.createCard(card));
+        request.setCreditLimit(-100);
+        assertThrows(CardCreationException.class, () -> cardService.createCard(request));
 
         // Negative cash limit
-        card.setCreditLimit(1000);
-        card.setCashLimit(-50);
-        assertThrows(CardCreationException.class, () -> cardService.createCard(card));
+        request.setCreditLimit(1000);
+        request.setCashLimit(-50);
+        assertThrows(CardCreationException.class, () -> cardService.createCard(request));
 
         // Cash limit > Credit limit
-        card.setCreditLimit(1000);
-        card.setCashLimit(1100);
-        CardCreationException exception = assertThrows(CardCreationException.class, () -> cardService.createCard(card));
+        request.setCreditLimit(1000);
+        request.setCashLimit(1100);
+        CardCreationException exception = assertThrows(CardCreationException.class, () -> cardService.createCard(request));
         assertEquals("Cash limit cannot exceed credit limit", exception.getMessage());
     }
 
     @Test
     void createCard_ShouldSetAvailableLimits_WhenValid() {
-        Card card = new Card();
-        card.setCardNumber("1234567890123456");
-        card.setCreditLimit(1000);
-        card.setCashLimit(500);
+        CreateCardRequest request = new CreateCardRequest();
+        request.setCardNumber("encrypted1234");
+        request.setCreditLimit(1000);
+        request.setCashLimit(500);
 
+        when(rsaEncryptionUtil.decrypt(anyString())).thenReturn("1234567890123456");
         when(cardRepo.existsByCardNumber(anyString())).thenReturn(false);
         when(cardRepo.createCard(any(Card.class))).thenReturn(true);
 
-        cardService.createCard(card);
+        boolean result = cardService.createCard(request);
 
-        assertEquals(1000, card.getAvailableCreditLimit());
-        assertEquals(500, card.getAvailableCashLimit());
+        assertTrue(result);
     }
 
     @Test

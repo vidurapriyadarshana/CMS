@@ -11,7 +11,9 @@ import edu.epic.cms.repository.CardRepo;
 
 import edu.epic.cms.service.CardService;
 import edu.epic.cms.util.CardEncryptionUtil;
+import edu.epic.cms.util.RsaEncryptionUtil;
 import edu.epic.cms.repository.CardRequestRepo;
+import edu.epic.cms.api.CreateCardRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,10 +24,12 @@ public class CardServiceImpl implements CardService {
 
     private final CardRepo cardRepo;
     private final CardRequestRepo cardRequestRepo;
+    private final RsaEncryptionUtil rsaEncryptionUtil;
 
-    public CardServiceImpl(CardRepo cardRepo, CardRequestRepo cardRequestRepo) {
+    public CardServiceImpl(CardRepo cardRepo, CardRequestRepo cardRequestRepo, RsaEncryptionUtil rsaEncryptionUtil) {
         this.cardRepo = cardRepo;
         this.cardRequestRepo = cardRequestRepo;
+        this.rsaEncryptionUtil = rsaEncryptionUtil;
     }
 
     @Override
@@ -58,30 +62,46 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public boolean createCard(Card card) {
-        if (card.getCardNumber() == null || card.getCardNumber().isEmpty()) {
+    public boolean createCard(CreateCardRequest request) {
+        if (request.getCardNumber() == null || request.getCardNumber().isEmpty()) {
             throw new CardCreationException("Card number is required");
         }
 
-        if (card.getCreditLimit() == null || card.getCreditLimit() < 0) {
+        String decryptedCardNumber;
+        try {
+            decryptedCardNumber = rsaEncryptionUtil.decrypt(request.getCardNumber());
+        } catch (Exception e) {
+            throw new CardCreationException("Invalid or malformed card encrypted payload");
+        }
+
+        if (decryptedCardNumber.length() != 16 || !decryptedCardNumber.matches("^[0-9]{16}$")) {
+            throw new CardCreationException("Decrypted card number must be exactly 16 digits");
+        }
+
+        if (request.getCreditLimit() == null || request.getCreditLimit() < 0) {
             throw new CardCreationException("Credit limit must be greater than or equal to 0");
         }
 
-        if (card.getCashLimit() == null || card.getCashLimit() < 0) {
+        if (request.getCashLimit() == null || request.getCashLimit() < 0) {
             throw new CardCreationException("Cash limit must be greater than or equal to 0");
         }
 
-        if (card.getCashLimit() > card.getCreditLimit()) {
+        if (request.getCashLimit() > request.getCreditLimit()) {
             throw new CardCreationException("Cash limit cannot exceed credit limit");
         }
 
-        card.setAvailableCreditLimit(card.getCreditLimit());
-        card.setAvailableCashLimit(card.getCashLimit());
+        Card card = new Card();
+        card.setExpireDate(request.getExpireDate());
+        card.setCardStatus(request.getCardStatus());
+        card.setCreditLimit(request.getCreditLimit());
+        card.setCashLimit(request.getCashLimit());
+        card.setAvailableCreditLimit(request.getCreditLimit());
+        card.setAvailableCashLimit(request.getCashLimit());
 
-        String encryptedCardNumber = CardEncryptionUtil.encrypt(card.getCardNumber());
+        String encryptedCardNumber = CardEncryptionUtil.encrypt(decryptedCardNumber);
         
         if (cardRepo.existsByCardNumber(encryptedCardNumber)) {
-            throw new DuplicateCardException("Card with number " + CardEncryptionUtil.maskCardNumber(card.getCardNumber()) + " already exists");
+            throw new DuplicateCardException("Card with number " + CardEncryptionUtil.maskCardNumber(decryptedCardNumber) + " already exists");
         }
 
         card.setCardNumber(encryptedCardNumber);
