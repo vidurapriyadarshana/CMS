@@ -63,6 +63,21 @@ public class CardServiceImpl implements CardService {
             throw new CardCreationException("Card number is required");
         }
 
+        if (card.getCreditLimit() == null || card.getCreditLimit() < 0) {
+            throw new CardCreationException("Credit limit must be greater than or equal to 0");
+        }
+
+        if (card.getCashLimit() == null || card.getCashLimit() < 0) {
+            throw new CardCreationException("Cash limit must be greater than or equal to 0");
+        }
+
+        if (card.getCashLimit() > card.getCreditLimit()) {
+            throw new CardCreationException("Cash limit cannot exceed credit limit");
+        }
+
+        card.setAvailableCreditLimit(card.getCreditLimit());
+        card.setAvailableCashLimit(card.getCashLimit());
+
         String encryptedCardNumber = CardEncryptionUtil.encrypt(card.getCardNumber());
         
         if (cardRepo.existsByCardNumber(encryptedCardNumber)) {
@@ -78,6 +93,22 @@ public class CardServiceImpl implements CardService {
     public boolean updateCard(String encryptedCardNumber, UpdateCard updateCard) {
         if (!cardRepo.existsByCardNumber(encryptedCardNumber)) {
             throw new CardNotFoundException("Card not found");
+        }
+
+        if (updateCard.getCashLimit() > updateCard.getCreditLimit()) {
+            throw new CardCreationException("Cash limit cannot exceed credit limit");
+        }
+
+        if (updateCard.getAvailableCreditLimit() > updateCard.getCreditLimit()) {
+            throw new CardCreationException("Available credit limit cannot exceed credit limit");
+        }
+
+        if (updateCard.getAvailableCashLimit() > updateCard.getCashLimit()) {
+            throw new CardCreationException("Available cash limit cannot exceed cash limit");
+        }
+
+        if (updateCard.getAvailableCashLimit() > updateCard.getAvailableCreditLimit()) {
+            throw new CardCreationException("Available cash limit cannot exceed available credit limit");
         }
 
         return cardRepo.updateCard(encryptedCardNumber, updateCard);
