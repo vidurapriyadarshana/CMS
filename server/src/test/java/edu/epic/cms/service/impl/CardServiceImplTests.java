@@ -4,6 +4,7 @@ import edu.epic.cms.exception.CardCreationException;
 import edu.epic.cms.exception.CardNotFoundException;
 import edu.epic.cms.exception.OutstandingBalanceException;
 import edu.epic.cms.model.Card;
+import edu.epic.cms.api.UpdateCard;
 import edu.epic.cms.repository.CardRepo;
 import edu.epic.cms.repository.CardRequestRepo;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +29,75 @@ class CardServiceImplTests {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         cardService = new CardServiceImpl(cardRepo, cardRequestRepo);
+    }
+
+    @Test
+    void createCard_ShouldThrowException_WhenLimitsAreInvalid() {
+        Card card = new Card();
+        card.setCardNumber("1234567890123456");
+        
+        // Negative credit limit
+        card.setCreditLimit(-100);
+        assertThrows(CardCreationException.class, () -> cardService.createCard(card));
+
+        // Negative cash limit
+        card.setCreditLimit(1000);
+        card.setCashLimit(-50);
+        assertThrows(CardCreationException.class, () -> cardService.createCard(card));
+
+        // Cash limit > Credit limit
+        card.setCreditLimit(1000);
+        card.setCashLimit(1100);
+        CardCreationException exception = assertThrows(CardCreationException.class, () -> cardService.createCard(card));
+        assertEquals("Cash limit cannot exceed credit limit", exception.getMessage());
+    }
+
+    @Test
+    void createCard_ShouldSetAvailableLimits_WhenValid() {
+        Card card = new Card();
+        card.setCardNumber("1234567890123456");
+        card.setCreditLimit(1000);
+        card.setCashLimit(500);
+
+        when(cardRepo.existsByCardNumber(anyString())).thenReturn(false);
+        when(cardRepo.createCard(any(Card.class))).thenReturn(true);
+
+        cardService.createCard(card);
+
+        assertEquals(1000, card.getAvailableCreditLimit());
+        assertEquals(500, card.getAvailableCashLimit());
+    }
+
+    @Test
+    void updateCard_ShouldThrowException_WhenLimitsAreInvalid() {
+        String cardNumber = "encrypted123";
+        UpdateCard updateCard = new UpdateCard();
+        updateCard.setExpireDate("12/25");
+        updateCard.setCreditLimit(1000);
+        updateCard.setCashLimit(500);
+        updateCard.setAvailableCreditLimit(1000);
+        updateCard.setAvailableCashLimit(500);
+
+        when(cardRepo.existsByCardNumber(cardNumber)).thenReturn(true);
+
+        // Cash limit > Credit limit
+        updateCard.setCashLimit(1100);
+        assertThrows(CardCreationException.class, () -> cardService.updateCard(cardNumber, updateCard));
+        updateCard.setCashLimit(500);
+
+        // Available credit limit > Credit limit
+        updateCard.setAvailableCreditLimit(1100);
+        assertThrows(CardCreationException.class, () -> cardService.updateCard(cardNumber, updateCard));
+        updateCard.setAvailableCreditLimit(1000);
+
+        // Available cash limit > Cash limit
+        updateCard.setAvailableCashLimit(600);
+        assertThrows(CardCreationException.class, () -> cardService.updateCard(cardNumber, updateCard));
+        updateCard.setAvailableCashLimit(500);
+
+        // Available cash limit > Available credit limit
+        updateCard.setAvailableCreditLimit(400);
+        assertThrows(CardCreationException.class, () -> cardService.updateCard(cardNumber, updateCard));
     }
 
     @Test
