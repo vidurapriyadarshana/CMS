@@ -38,7 +38,7 @@ const ConfirmRequestTable = ({ requests, onChangeStatus }: ConfirmRequestTablePr
                                     {request.requestReasonCode}
                                 </div>
                             </td>
-                            <td className="px-6 py-4 text-slate-600 truncate max-w-[200px]" title={request.remark}>
+                            <td className="px-6 py-4 text-slate-600 truncate max-w-50" title={request.remark}>
                                 <div className="flex items-center gap-2">
                                     <FileText className="w-4 h-4 text-slate-400" />
                                     {request.remark || '-'}
