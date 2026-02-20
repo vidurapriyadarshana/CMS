@@ -3,7 +3,10 @@ package edu.epic.cms.repository.impl;
 import edu.epic.cms.model.CardRequest;
 import edu.epic.cms.repository.CardRequestRepo;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public class CardRequestRepoImpl implements CardRequestRepo {
@@ -12,6 +15,32 @@ public class CardRequestRepoImpl implements CardRequestRepo {
 
     public CardRequestRepoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
+    }
+
+    private final RowMapper<CardRequest> rowMapper = (rs, rowNum) -> {
+        CardRequest request = new CardRequest();
+        request.setRequestId(rs.getInt("RequestId"));
+        request.setRequestReasonCode(rs.getString("RequestReasonCode"));
+        request.setRemark(rs.getString("Remark"));
+        request.setCardNumber(rs.getString("CardNumber"));
+        request.setStatus(rs.getString("Status"));
+        if (rs.getTimestamp("CreatedTime") != null) {
+            request.setCreatedTime(rs.getTimestamp("CreatedTime").toLocalDateTime());
+        }
+        request.setCompletionStatus(rs.getString("CompletionStatus"));
+        return request;
+    };
+
+    @Override
+    public List<CardRequest> getAllCardRequests() {
+        String sql = "SELECT RequestId, RequestReasonCode, Remark, CardNumber, Status, CreatedTime, CompletionStatus FROM CardRequest";
+        return jdbcTemplate.query(sql, rowMapper);
+    }
+
+    @Override
+    public List<CardRequest> getCardRequestsByCardNumber(String cardNumber) {
+        String sql = "SELECT RequestId, RequestReasonCode, Remark, CardNumber, Status, CreatedTime, CompletionStatus FROM CardRequest WHERE CardNumber = ?";
+        return jdbcTemplate.query(sql, rowMapper, cardNumber);
     }
 
     @Override
@@ -60,4 +89,3 @@ public class CardRequestRepoImpl implements CardRequestRepo {
         return count != null && count > 0;
     }
 }
-

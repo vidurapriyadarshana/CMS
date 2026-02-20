@@ -24,6 +24,8 @@ public class CardRequest {
     @NotBlank(message = "Card number is required")
     private String cardNumber;
 
+    private String encryptedCardNumber;
+
     @NotBlank(message = "Status is required")
     @Size(max = 4, message = "Status must not exceed 4 characters")
     private String status;
@@ -62,6 +64,14 @@ public class CardRequest {
 
     public void setCardNumber(String cardNumber) {
         this.cardNumber = cardNumber;
+    }
+
+    public String getEncryptedCardNumber() {
+        return encryptedCardNumber;
+    }
+
+    public void setEncryptedCardNumber(String encryptedCardNumber) {
+        this.encryptedCardNumber = encryptedCardNumber;
     }
 
     public String getStatus() {

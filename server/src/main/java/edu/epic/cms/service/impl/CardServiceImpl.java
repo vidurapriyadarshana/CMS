@@ -118,6 +118,10 @@ public class CardServiceImpl implements CardService {
             throw new CardCreationException("Card is deactivated");
         }
 
+        if (!cardRequestRepo.hasPendingRequest(encryptedCardNumber)) {
+            throw new CardCreationException("No pending request found for this card number");
+        }
+
         Card card = cardRepo.getCardByNumber(encryptedCardNumber);
         if (card != null) {
             if (!card.getCreditLimit().equals(card.getAvailableCreditLimit())) {

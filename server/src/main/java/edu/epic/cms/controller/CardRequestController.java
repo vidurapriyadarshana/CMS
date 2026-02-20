@@ -8,14 +8,9 @@ import edu.epic.cms.api.CommonResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/card-requests")
@@ -25,6 +20,18 @@ public class CardRequestController {
 
     public CardRequestController(CardRequestService cardRequestService) {
         this.cardRequestService = cardRequestService;
+    }
+
+    @GetMapping
+    public ResponseEntity<CommonResponse> getAllCardRequests() {
+        List<CardRequest> requests = cardRequestService.getAllCardRequests();
+        return ResponseEntity.ok(CommonResponse.success(requests));
+    }
+
+    @GetMapping("/{encryptedCardNumber}")
+    public ResponseEntity<CommonResponse> getCardRequestsByCardNumber(@PathVariable String encryptedCardNumber) {
+        List<CardRequest> requests = cardRequestService.getCardRequestsByCardNumber(encryptedCardNumber);
+        return ResponseEntity.ok(CommonResponse.success(requests));
     }
 
     @PostMapping
@@ -47,4 +54,3 @@ public class CardRequestController {
         throw new CardException("Failed to update card request status");
     }
 }
-

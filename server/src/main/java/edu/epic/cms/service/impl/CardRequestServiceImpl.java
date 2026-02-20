@@ -7,7 +7,10 @@ import edu.epic.cms.model.CardRequest;
 import edu.epic.cms.repository.CardRepo;
 import edu.epic.cms.repository.CardRequestRepo;
 import edu.epic.cms.service.CardRequestService;
+import edu.epic.cms.util.CardEncryptionUtil;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CardRequestServiceImpl implements CardRequestService {
@@ -18,6 +21,30 @@ public class CardRequestServiceImpl implements CardRequestService {
     public CardRequestServiceImpl(CardRequestRepo cardRequestRepo, CardRepo cardRepo) {
         this.cardRequestRepo = cardRequestRepo;
         this.cardRepo = cardRepo;
+    }
+
+    @Override
+    public List<CardRequest> getAllCardRequests() {
+        List<CardRequest> requests = cardRequestRepo.getAllCardRequests();
+        maskCardNumbers(requests);
+        return requests;
+    }
+
+    @Override
+    public List<CardRequest> getCardRequestsByCardNumber(String encryptedCardNumber) {
+        List<CardRequest> requests = cardRequestRepo.getCardRequestsByCardNumber(encryptedCardNumber);
+        maskCardNumbers(requests);
+        return requests;
+    }
+
+    private void maskCardNumbers(List<CardRequest> requests) {
+        for (CardRequest request : requests) {
+            String encrypted = request.getCardNumber();
+            request.setEncryptedCardNumber(encrypted);
+            String decrypted = CardEncryptionUtil.decrypt(encrypted);
+            String masked = CardEncryptionUtil.maskCardNumber(decrypted);
+            request.setCardNumber(masked);
+        }
     }
 
     @Override
