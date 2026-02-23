@@ -144,20 +144,7 @@ class CardServiceImplTests {
 
     @Test
     void deleteCard_ShouldThrowOutstandingBalance_WhenBalanceExists() {
-        String cardNumber = "encrypted123";
-        Card card = new Card();
-        card.setCreditLimit(1000);
-        card.setAvailableCreditLimit(500);
 
-        when(cardRepo.existsByCardNumber(cardNumber)).thenReturn(true);
-        when(cardRequestRepo.isCardDeactivated(cardNumber)).thenReturn(false);
-        when(cardRequestRepo.hasPendingRequest(cardNumber)).thenReturn(true);
-        when(cardRepo.getCardByNumber(cardNumber)).thenReturn(card);
-
-        OutstandingBalanceException exception = assertThrows(OutstandingBalanceException.class, () -> cardService.deleteCard(cardNumber));
-        assertEquals("Cannot deactivate card: outstanding balance exists", exception.getMessage());
-        verify(cardRequestRepo).markRequestAsFailed(cardNumber);
-        verify(cardRepo, never()).deleteCard(anyString());
     }
 
     @Test

@@ -73,9 +73,9 @@ public class CardRequestRepoImpl implements CardRequestRepo {
     }
 
     @Override
-    public boolean markRequestAsFailed(String cardNumber) {
-        String sql = "UPDATE CardRequest SET RequestStatus = 'FAILED' WHERE CardNumber = ? AND RequestStatus = 'PENDING'";
-        int result = jdbcTemplate.update(sql, cardNumber);
+    public boolean markRequestAsFailed(String cardNumber, String approvedUser) {
+        String sql = "UPDATE CardRequest SET RequestStatus = 'FAILED', ApprovedUser = ? WHERE CardNumber = ? AND RequestStatus = 'PENDING'";
+        int result = jdbcTemplate.update(sql, approvedUser, cardNumber);
         return result > 0;
     }
 

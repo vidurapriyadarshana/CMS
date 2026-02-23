@@ -118,6 +118,14 @@ public class CardServiceImpl implements CardService {
             throw new CardNotFoundException("Card not found");
         }
 
+        if (cardRequestRepo.isCardDeactivated(encryptedCardNumber)) {
+            throw new CardCreationException("Cannot update card: Card is deactivated");
+        }
+
+        if (!cardRequestRepo.hasPendingRequest(encryptedCardNumber)) {
+            throw new CardCreationException("A pending request is required to update card details");
+        }
+
         if (updateCard.getCashLimit() > updateCard.getCreditLimit()) {
             throw new CardCreationException("Cash limit cannot exceed credit limit");
         }
@@ -181,7 +189,7 @@ public class CardServiceImpl implements CardService {
         Card card = cardRepo.getCardByNumber(encryptedCardNumber);
         if (card != null) {
             if (!card.getCreditLimit().equals(card.getAvailableCreditLimit())) {
-                cardRequestRepo.markRequestAsFailed(encryptedCardNumber);
+                cardRequestRepo.markRequestAsFailed(encryptedCardNumber, card.getLastUpdatedUser() != null ? card.getLastUpdatedUser() : "SYSTEM");
                 throw new OutstandingBalanceException("Cannot deactivate card: outstanding balance exists");
             }
         }
@@ -193,4 +201,3 @@ public class CardServiceImpl implements CardService {
         return deleted;
     }
 }
-
