@@ -7,6 +7,12 @@ import { fetchStatusTypes } from '../store/slices/optionsSlice';
 import type { RootState, AppDispatch } from '../store/index';
 import type { CardRequestData, CommonResponse } from '../types/card';
 
+interface User {
+    userName: string;
+    status: string;
+    name: string;
+}
+
 interface ChangeStatusModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -19,7 +25,9 @@ const ChangeStatusModal: React.FC<ChangeStatusModalProps> = ({ isOpen, onClose, 
     const { statusTypes, loadingStatusTypes } = useSelector((state: RootState) => state.options);
 
     const [isLoading, setIsLoading] = useState(false);
+    const [users, setUsers] = useState<User[]>([]);
     const [selectedStatus, setSelectedStatus] = useState('');
+    const [approvedUser, setApprovedUser] = useState('');
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
@@ -27,7 +35,15 @@ const ChangeStatusModal: React.FC<ChangeStatusModalProps> = ({ isOpen, onClose, 
             if (statusTypes.length === 0) {
                 dispatch(fetchStatusTypes());
             }
+            axios.get('/users').then(res => {
+                if (res.data && res.data.code === 200) {
+                    setUsers(res.data.data);
+                }
+            }).catch(err => {
+                console.error('Failed to fetch users', err);
+            });
             setSelectedStatus('');
+            setApprovedUser('');
             setError(null);
         }
     }, [isOpen, dispatch, statusTypes.length]);
@@ -48,11 +64,17 @@ const ChangeStatusModal: React.FC<ChangeStatusModalProps> = ({ isOpen, onClose, 
             return;
         }
 
+        if (!approvedUser) {
+            setError('Please select an approving user');
+            return;
+        }
+
         setIsLoading(true);
         setError(null);
         try {
             const payload = {
-                status: selectedStatus
+                status: selectedStatus,
+                approvedUser: approvedUser
             };
 
             const response = await axios.put<CommonResponse<string>>(`/card-requests/${request.encryptedCardNumber}/status`, payload);
@@ -115,7 +137,7 @@ const ChangeStatusModal: React.FC<ChangeStatusModalProps> = ({ isOpen, onClose, 
                         </div>
                         <div className="flex justify-between">
                             <span className="text-slate-500">Current Status</span>
-                            <span className="font-medium text-slate-900">{request.status}</span>
+                            <span className="font-medium text-slate-900">{request.requestStatus}</span>
                         </div>
                     </div>
 
@@ -142,6 +164,23 @@ const ChangeStatusModal: React.FC<ChangeStatusModalProps> = ({ isOpen, onClose, 
                                     ))}
                                 </select>
                             )}
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Approved User</label>
+                            <select
+                                required
+                                value={approvedUser}
+                                onChange={(e) => setApprovedUser(e.target.value)}
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none bg-white"
+                            >
+                                <option value="" disabled>Select User</option>
+                                {users.map(user => (
+                                    <option key={user.userName} value={user.userName}>
+                                        {user.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 

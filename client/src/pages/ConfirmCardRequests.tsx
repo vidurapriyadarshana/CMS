@@ -17,8 +17,8 @@ const ConfirmCardRequests = () => {
 
     const filteredRequests = requests.filter(request => {
         if (filterStatus === 'ALL') return true;
-        // Default to PENDING if completionStatus is null/undefined
-        const status = request.completionStatus || 'PENDING';
+        // Default to PENDING if requestStatus is null/undefined
+        const status = request.requestStatus || 'PENDING';
         return status === filterStatus;
     });
 
@@ -48,7 +48,7 @@ const ConfirmCardRequests = () => {
                         >
                             <option value="ALL">All Requests</option>
                             <option value="PENDING">Pending</option>
-                            <option value="COMPLETED">Completed</option>
+                            <option value="COMPLETE">Completed</option>
                             <option value="FAILED">Failed</option>
                             <option value="DEACTIVATED">Deactivated</option>
                         </select>

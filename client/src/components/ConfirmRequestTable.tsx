@@ -16,9 +16,10 @@ const ConfirmRequestTable = ({ requests, onChangeStatus }: ConfirmRequestTablePr
                         <th className="px-6 py-4">Card Number</th>
                         <th className="px-6 py-4">Reason Code</th>
                         <th className="px-6 py-4">Remark</th>
-                        <th className="px-6 py-4">Current Status</th>
+                        <th className="px-6 py-4">Requested By</th>
+                        <th className="px-6 py-4">Approved By</th>
                         <th className="px-6 py-4">Created Time</th>
-                        <th className="px-6 py-4">Request Status</th>
+                        <th className="px-6 py-4">Status</th>
                         <th className="px-6 py-4 text-center">Actions</th>
                     </tr>
                 </thead>
@@ -44,10 +45,11 @@ const ConfirmRequestTable = ({ requests, onChangeStatus }: ConfirmRequestTablePr
                                     {request.remark || '-'}
                                 </div>
                             </td>
-                            <td className="px-6 py-4">
-                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800`}>
-                                    {request.status}
-                                </span>
+                            <td className="px-6 py-4 font-medium text-slate-700">
+                                {request.requestedUser || '-'}
+                            </td>
+                            <td className="px-6 py-4 font-medium text-slate-700">
+                                {request.approvedUser || '-'}
                             </td>
                             <td className="px-6 py-4 text-slate-600 whitespace-nowrap">
                                 <div className="flex items-center gap-2">
@@ -58,16 +60,16 @@ const ConfirmRequestTable = ({ requests, onChangeStatus }: ConfirmRequestTablePr
                             <td className="px-6 py-4">
                                 <span className={cn(
                                     "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold tracking-widest uppercase border border-opacity-50",
-                                    request.completionStatus === 'COMPLETED' ? 'bg-green-50 text-green-700 border-green-200' :
-                                        request.completionStatus === 'FAILED' ? 'bg-red-50 text-red-700 border-red-200' :
-                                            request.completionStatus === 'DEACTIVATED' ? 'bg-slate-100 text-slate-700 border-slate-200' :
+                                    (request.requestStatus === 'COMPLETED' || request.requestStatus === 'COMPLETE') ? 'bg-green-50 text-green-700 border-green-200' :
+                                        request.requestStatus === 'FAILED' ? 'bg-red-50 text-red-700 border-red-200' :
+                                            request.requestStatus === 'DEACTIVATED' ? 'bg-slate-100 text-slate-700 border-slate-200' :
                                                 'bg-amber-50 text-amber-700 border-amber-200'
                                 )}>
-                                    {request.completionStatus === 'COMPLETED' ? <CheckCircle2 className="w-3.5 h-3.5" /> :
-                                        request.completionStatus === 'FAILED' ? <XCircle className="w-3.5 h-3.5" /> :
-                                            request.completionStatus === 'DEACTIVATED' ? <Ban className="w-3.5 h-3.5" /> :
+                                    {(request.requestStatus === 'COMPLETED' || request.requestStatus === 'COMPLETE') ? <CheckCircle2 className="w-3.5 h-3.5" /> :
+                                        request.requestStatus === 'FAILED' ? <XCircle className="w-3.5 h-3.5" /> :
+                                            request.requestStatus === 'DEACTIVATED' ? <Ban className="w-3.5 h-3.5" /> :
                                                 <Clock className="w-3.5 h-3.5" />}
-                                    {request.completionStatus || 'PENDING'}
+                                    {request.requestStatus || 'PENDING'}
                                 </span>
                             </td>
                             <td className="px-6 py-4 text-center">
@@ -86,7 +88,7 @@ const ConfirmRequestTable = ({ requests, onChangeStatus }: ConfirmRequestTablePr
                     ))}
                     {requests.length === 0 && (
                         <tr>
-                            <td colSpan={7} className="px-6 py-12 text-center text-slate-400">
+                            <td colSpan={8} className="px-6 py-12 text-center text-slate-400">
                                 No card requests found.
                             </td>
                         </tr>

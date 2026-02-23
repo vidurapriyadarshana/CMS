@@ -9,6 +9,7 @@ export interface CardResponse {
     availableCreditLimit: number;
     availableCashLimit: number;
     lastUpdateTime: string; // ISO Date string
+    lastUpdatedUser: string;
 }
 
 export interface CardRequest {
@@ -60,7 +61,8 @@ export interface CardRequestData {
     remark: string;
     cardNumber: string;
     encryptedCardNumber: string;
-    status: string;
     createdTime: string; // ISO Date String
-    completionStatus: string;
+    approvedUser: string | null;
+    requestedUser: string;
+    requestStatus: string;
 }

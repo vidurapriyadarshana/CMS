@@ -24,6 +24,7 @@ const CardTable = ({ cards, onCardClick, onDelete, onRequest }: CardTableProps) 
                         <th className="px-6 py-4 text-right">Avail. Credit</th>
                         <th className="px-6 py-4 text-right">Avail. Cash</th>
                         <th className="px-6 py-4 text-right">Last Update</th>
+                        <th className="px-6 py-4 text-right">Last Updated By</th>
                         <th className="px-6 py-4 text-center">Actions</th>
                     </tr>
                 </thead>
@@ -69,6 +70,9 @@ const CardTable = ({ cards, onCardClick, onDelete, onRequest }: CardTableProps) 
                             <td className="px-6 py-4 text-right text-slate-500 text-xs">
                                 {card.lastUpdateTime ? new Date(card.lastUpdateTime).toLocaleDateString() : 'N/A'}
                             </td>
+                            <td className="px-6 py-4 text-right font-medium text-slate-700">
+                                {card.lastUpdatedUser || '-'}
+                            </td>
                             <td className="px-6 py-4 text-center">
                                 <div className="flex items-center justify-center gap-2">
                                     {onRequest && (
@@ -101,7 +105,7 @@ const CardTable = ({ cards, onCardClick, onDelete, onRequest }: CardTableProps) 
                     ))}
                     {cards.length === 0 && (
                         <tr>
-                            <td colSpan={8} className="px-6 py-12 text-center text-slate-400">
+                            <td colSpan={9} className="px-6 py-12 text-center text-slate-400">
                                 No cards found.
                             </td>
                         </tr>
