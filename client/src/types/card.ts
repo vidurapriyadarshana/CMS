@@ -18,6 +18,7 @@ export interface CardRequest {
     cashLimit: number;
     availableCreditLimit: number;
     availableCashLimit: number;
+    lastUpdatedUser: string;
 }
 
 export interface UpdateCardRequest {
@@ -45,6 +46,7 @@ export interface SendCardRequestPayload {
     remark: string;
     cardNumber: string;
     status: string;
+    requestedUser: string;
 }
 
 export interface StatusType {

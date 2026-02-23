@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Loader2, X } from 'lucide-react';
 import axios from 'axios';
 import JSEncrypt from 'jsencrypt';
 import type { CardRequest } from '../types/card';
+
+interface User {
+    userName: string;
+    status: string;
+    name: string;
+}
 
 interface CreateCardModalProps {
     isOpen: boolean;
@@ -12,6 +18,7 @@ interface CreateCardModalProps {
 
 const CreateCardModal: React.FC<CreateCardModalProps> = ({ isOpen, onClose, onCreate }) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [users, setUsers] = useState<User[]>([]);
     const [formData, setFormData] = useState<CardRequest>({
         cardNumber: '',
         expireDate: '',
@@ -19,8 +26,21 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({ isOpen, onClose, onCr
         cashLimit: 20000,
         availableCreditLimit: 50000,
         availableCashLimit: 20000,
+        lastUpdatedUser: '',
     });
     const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (isOpen) {
+            axios.get('/users').then(res => {
+                if (res.data && res.data.code === 200) {
+                    setUsers(res.data.data);
+                }
+            }).catch(err => {
+                console.error('Failed to fetch users', err);
+            });
+        }
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
@@ -115,7 +135,7 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({ isOpen, onClose, onCr
                             <p className="text-xs text-slate-500 mt-1">16 digits required</p>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-4">
+                        <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-1">Expiry Date</label>
                                 <input
@@ -128,6 +148,23 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({ isOpen, onClose, onCr
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                                 />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-slate-700 mb-1">Last Updated User</label>
+                                <select
+                                    name="lastUpdatedUser"
+                                    required
+                                    value={formData.lastUpdatedUser}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none bg-white"
+                                >
+                                    <option value="" disabled>Select User</option>
+                                    {users.map(user => (
+                                        <option key={user.userName} value={user.userName}>
+                                            {user.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                         </div>
 

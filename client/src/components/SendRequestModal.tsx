@@ -8,6 +8,12 @@ import type { RootState, AppDispatch } from '../store/index';
 import type { CardResponse, SendCardRequestPayload, CommonResponse } from '../types/card';
 import CardVisual from './CardVisual';
 
+interface User {
+    userName: string;
+    status: string;
+    name: string;
+}
+
 interface SendRequestModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -19,9 +25,11 @@ const SendRequestModal: React.FC<SendRequestModalProps> = ({ isOpen, onClose, ca
     const { requestTypes, loadingRequestTypes } = useSelector((state: RootState) => state.options);
 
     const [isLoading, setIsLoading] = useState(false);
+    const [users, setUsers] = useState<User[]>([]);
     const [formData, setFormData] = useState({
         requestReasonCode: '',
-        remark: ''
+        remark: '',
+        requestedUser: ''
     });
     const [error, setError] = useState<string | null>(null);
 
@@ -30,10 +38,18 @@ const SendRequestModal: React.FC<SendRequestModalProps> = ({ isOpen, onClose, ca
             if (requestTypes.length === 0) {
                 dispatch(fetchRequestTypes());
             }
+            axios.get('/users').then(res => {
+                if (res.data && res.data.code === 200) {
+                    setUsers(res.data.data);
+                }
+            }).catch(err => {
+                console.error('Failed to fetch users', err);
+            });
             // Reset form when modal opens
             setFormData({
                 requestReasonCode: '',
-                remark: ''
+                remark: '',
+                requestedUser: ''
             });
             setError(null);
         }
@@ -62,7 +78,8 @@ const SendRequestModal: React.FC<SendRequestModalProps> = ({ isOpen, onClose, ca
                 requestReasonCode: formData.requestReasonCode,
                 remark: formData.remark,
                 cardNumber: card.encryptedCardNumber, // Using the backend 'id' representing the card
-                status: card.cardStatus // Send current card status as requested
+                status: card.cardStatus, // Send current card status as requested
+                requestedUser: formData.requestedUser
             };
 
             const response = await axios.post<CommonResponse<string>>('/card-requests', payload);
@@ -153,6 +170,24 @@ const SendRequestModal: React.FC<SendRequestModalProps> = ({ isOpen, onClose, ca
                                 placeholder="Enter a remark or reason details"
                                 className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                             />
+                        </div>
+
+                        <div>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">Requested User</label>
+                            <select
+                                name="requestedUser"
+                                required
+                                value={formData.requestedUser}
+                                onChange={handleChange}
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none bg-white"
+                            >
+                                <option value="" disabled>Select User</option>
+                                {users.map(user => (
+                                    <option key={user.userName} value={user.userName}>
+                                        {user.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                     </div>
 
