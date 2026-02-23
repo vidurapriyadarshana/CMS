@@ -47,7 +47,7 @@ public class CardRequestController {
     public ResponseEntity<CommonResponse> updateStatus(
             @PathVariable String encryptedCardNumber,
             @Valid @RequestBody StatusUpdateRequest statusUpdateRequest) {
-        boolean isUpdated = cardRequestService.updateStatus(encryptedCardNumber, statusUpdateRequest.getStatus());
+        boolean isUpdated = cardRequestService.updateStatus(encryptedCardNumber, statusUpdateRequest.getStatus(), statusUpdateRequest.getApprovedUser());
         if (isUpdated) {
             return ResponseEntity.ok(CommonResponse.success("Card request status updated successfully"));
         }

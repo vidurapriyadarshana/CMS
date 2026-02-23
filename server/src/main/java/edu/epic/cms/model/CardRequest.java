@@ -19,6 +19,8 @@ public class CardRequest {
     @Size(max = 255, message = "Remark must not exceed 255 characters")
     private String remark;
 
+    private String encryptedCardNumber;
+
     @NotBlank(message = "Card number is required")
     private String cardNumber;
 
@@ -29,6 +31,14 @@ public class CardRequest {
 
     @Size(max = 100, message = "Requested user must not exceed 100 characters")
     private String requestedUser;
+
+    public String getEncryptedCardNumber() {
+        return encryptedCardNumber;
+    }
+
+    public void setEncryptedCardNumber(String encryptedCardNumber) {
+        this.encryptedCardNumber = encryptedCardNumber;
+    }
 
     public Integer getRequestId() {
         return requestId;

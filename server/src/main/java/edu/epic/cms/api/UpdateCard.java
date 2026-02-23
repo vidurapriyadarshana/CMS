@@ -26,6 +26,8 @@ public class UpdateCard {
     @Min(value = 0, message = "Available cash limit must be a positive value")
     private Integer availableCashLimit;
 
+    private String lastUpdatedUser;
+
     public String getExpireDate() {
         return expireDate;
     }
@@ -65,4 +67,13 @@ public class UpdateCard {
     public void setAvailableCashLimit(Integer availableCashLimit) {
         this.availableCashLimit = availableCashLimit;
     }
+
+    public String getLastUpdatedUser() {
+        return lastUpdatedUser;
+    }
+
+    public void setLastUpdatedUser(String lastUpdatedUser) {
+        this.lastUpdatedUser = lastUpdatedUser;
+    }
+
 }

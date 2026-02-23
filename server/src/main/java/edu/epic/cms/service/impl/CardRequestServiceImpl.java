@@ -61,7 +61,7 @@ public class CardRequestServiceImpl implements CardRequestService {
     }
 
     @Override
-    public boolean updateStatus(String encryptedCardNumber, String status) {
+    public boolean updateStatus(String encryptedCardNumber, String status, String approvedUser) {
         if (cardRequestRepo.isCardDeactivated(encryptedCardNumber)) {
             throw new CardCreationException("Card is deactivated");
         }
@@ -80,6 +80,6 @@ public class CardRequestServiceImpl implements CardRequestService {
             }
         }
 
-        return cardRequestRepo.updateStatusByCardNumber(encryptedCardNumber, status);
+        return cardRequestRepo.updateStatusByCardNumber(encryptedCardNumber, status, approvedUser);
     }
 }

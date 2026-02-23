@@ -55,7 +55,9 @@ public class CardServiceImpl implements CardService {
             response.setAvailableCreditLimit(card.getAvailableCreditLimit());
             response.setAvailableCashLimit(card.getAvailableCashLimit());
             response.setLastUpdateTime(card.getLastUpdateTime());
+            response.setLastUpdatedUser(card.getLastUpdatedUser());
             cardResponses.add(response);
+
         }
 
         return cardResponses;
@@ -92,11 +94,12 @@ public class CardServiceImpl implements CardService {
 
         Card card = new Card();
         card.setExpireDate(request.getExpireDate());
-        card.setCardStatus(request.getCardStatus());
         card.setCreditLimit(request.getCreditLimit());
         card.setCashLimit(request.getCashLimit());
         card.setAvailableCreditLimit(request.getCreditLimit());
         card.setAvailableCashLimit(request.getCashLimit());
+        card.setLastUpdatedUser(request.getLastUpdatedUser());
+
 
         String encryptedCardNumber = CardEncryptionUtil.encrypt(decryptedCardNumber);
         
@@ -155,8 +158,10 @@ public class CardServiceImpl implements CardService {
         response.setAvailableCreditLimit(card.getAvailableCreditLimit());
         response.setAvailableCashLimit(card.getAvailableCashLimit());
         response.setLastUpdateTime(card.getLastUpdateTime());
+        response.setLastUpdatedUser(card.getLastUpdatedUser());
 
         return response;
+
     }
 
     @Override

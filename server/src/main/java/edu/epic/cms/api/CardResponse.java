@@ -18,6 +18,7 @@ public class CardResponse {
     private Integer availableCreditLimit;
     private Integer availableCashLimit;
     private LocalDateTime lastUpdateTime;
+    private String lastUpdatedUser;
 
     public String getCardNumber() {
         return cardNumber;
@@ -89,5 +90,13 @@ public class CardResponse {
 
     public void setLastUpdateTime(LocalDateTime lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
+    }
+
+    public String getLastUpdatedUser() {
+        return lastUpdatedUser;
+    }
+
+    public void setLastUpdatedUser(String lastUpdatedUser) {
+        this.lastUpdatedUser = lastUpdatedUser;
     }
 }

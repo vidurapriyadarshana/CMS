@@ -21,7 +21,7 @@ public class CardRepoImpl implements CardRepo {
     @Override
     public List<Card> getAllCards() {
         String sql = "SELECT CardNumber, ExpireDate, CardStatus, CreditLimit, CashLimit, " +
-                "AvailableCreditLimit, AvailableCashLimit, LastUpdateTime FROM Card";
+                "AvailableCreditLimit, AvailableCashLimit, LastUpdateTime, LastUpdatedUser FROM Card";
 
         return jdbcTemplate.query(sql, (rs, rowNum) -> {
             Card card = new Card();
@@ -35,6 +35,7 @@ public class CardRepoImpl implements CardRepo {
             if (rs.getTimestamp("LastUpdateTime") != null) {
                 card.setLastUpdateTime(rs.getTimestamp("LastUpdateTime").toLocalDateTime());
             }
+            card.setLastUpdatedUser(rs.getString("LastUpdatedUser"));
             return card;
         });
     }
@@ -42,7 +43,7 @@ public class CardRepoImpl implements CardRepo {
     @Override
     public boolean createCard(Card card) {
         String sql = "INSERT INTO Card (CardNumber, ExpireDate, CreditLimit, CashLimit, " +
-                "AvailableCreditLimit, AvailableCashLimit) VALUES (?, ?, ?, ?, ?, ?)";
+                "AvailableCreditLimit, AvailableCashLimit, LastUpdatedUser) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         int result = jdbcTemplate.update(sql,
                 card.getCardNumber(),
@@ -50,10 +51,12 @@ public class CardRepoImpl implements CardRepo {
                 card.getCreditLimit(),
                 card.getCashLimit(),
                 card.getAvailableCreditLimit(),
-                card.getAvailableCashLimit());
+                card.getAvailableCashLimit(),
+                card.getLastUpdatedUser());
         
         return result > 0;
     }
+
 
     @Override
     public boolean existsByCardNumber(String cardNumber) {
@@ -65,7 +68,7 @@ public class CardRepoImpl implements CardRepo {
     @Override
     public boolean updateCard(String cardNumber, UpdateCard updateCard) {
         String sql = "UPDATE Card SET ExpireDate = ?, CreditLimit = ?, CashLimit = ?, " +
-                "AvailableCreditLimit = ?, AvailableCashLimit = ? WHERE CardNumber = ?";
+                "AvailableCreditLimit = ?, AvailableCashLimit = ?, LastUpdatedUser = ? WHERE CardNumber = ?";
 
         int result = jdbcTemplate.update(sql,
                 updateCard.getExpireDate(),
@@ -73,6 +76,7 @@ public class CardRepoImpl implements CardRepo {
                 updateCard.getCashLimit(),
                 updateCard.getAvailableCreditLimit(),
                 updateCard.getAvailableCashLimit(),
+                updateCard.getLastUpdatedUser(),
                 cardNumber);
 
         return result > 0;
@@ -81,7 +85,7 @@ public class CardRepoImpl implements CardRepo {
     @Override
     public Card getCardByNumber(String cardNumber) {
         String sql = "SELECT CardNumber, ExpireDate, CardStatus, CreditLimit, CashLimit, " +
-                "AvailableCreditLimit, AvailableCashLimit, LastUpdateTime FROM Card WHERE CardNumber = ?";
+                "AvailableCreditLimit, AvailableCashLimit, LastUpdateTime, LastUpdatedUser FROM Card WHERE CardNumber = ?";
 
         List<Card> cards = jdbcTemplate.query(sql, (rs, rowNum) -> {
             Card card = new Card();
@@ -95,15 +99,17 @@ public class CardRepoImpl implements CardRepo {
             if (rs.getTimestamp("LastUpdateTime") != null) {
                 card.setLastUpdateTime(rs.getTimestamp("LastUpdateTime").toLocalDateTime());
             }
+            card.setLastUpdatedUser(rs.getString("LastUpdatedUser"));
             return card;
         }, cardNumber);
+
 
         return cards.stream().findFirst().orElse(null);
     }
 
     @Override
     public boolean deleteCard(String cardNumber) {
-        String sql = "UPDATE Card SET CardStatus = 'DACT' WHERE CardNumber = ?";
+        String sql = "DELETE FROM Card WHERE CardNumber = ?";
         int result = jdbcTemplate.update(sql, cardNumber);
         return result > 0;
     }
