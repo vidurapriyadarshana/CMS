@@ -36,6 +36,9 @@ public class Card {
 
     private LocalDateTime lastUpdateTime;
 
+    @Size(max = 100, message = "Last updated user must not exceed 100 characters")
+    private String lastUpdatedUser;
+
     public String getCardNumber() {
         return cardNumber;
     }
@@ -98,5 +101,13 @@ public class Card {
 
     public void setLastUpdateTime(LocalDateTime lastUpdateTime) {
         this.lastUpdateTime = lastUpdateTime;
+    }
+
+    public String getLastUpdatedUser() {
+        return lastUpdatedUser;
+    }
+
+    public void setLastUpdatedUser(String lastUpdatedUser) {
+        this.lastUpdatedUser = lastUpdatedUser;
     }
 }

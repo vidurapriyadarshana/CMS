@@ -22,15 +22,13 @@ public class CardRequest {
     @NotBlank(message = "Card number is required")
     private String cardNumber;
 
-    private String encryptedCardNumber;
-
-    @NotBlank(message = "Status is required")
-    @Size(max = 4, message = "Status must not exceed 4 characters")
-    private String status;
-
     private LocalDateTime createdTime;
 
-    private String completionStatus;
+    @Size(max = 100, message = "Approved user must not exceed 100 characters")
+    private String approvedUser;
+
+    @Size(max = 100, message = "Requested user must not exceed 100 characters")
+    private String requestedUser;
 
     public Integer getRequestId() {
         return requestId;
@@ -64,22 +62,6 @@ public class CardRequest {
         this.cardNumber = cardNumber;
     }
 
-    public String getEncryptedCardNumber() {
-        return encryptedCardNumber;
-    }
-
-    public void setEncryptedCardNumber(String encryptedCardNumber) {
-        this.encryptedCardNumber = encryptedCardNumber;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
     public LocalDateTime getCreatedTime() {
         return createdTime;
     }
@@ -88,11 +70,19 @@ public class CardRequest {
         this.createdTime = createdTime;
     }
 
-    public String getCompletionStatus() {
-        return completionStatus;
+    public String getApprovedUser() {
+        return approvedUser;
     }
 
-    public void setCompletionStatus(String completionStatus) {
-        this.completionStatus = completionStatus;
+    public void setApprovedUser(String approvedUser) {
+        this.approvedUser = approvedUser;
+    }
+
+    public String getRequestedUser() {
+        return requestedUser;
+    }
+
+    public void setRequestedUser(String requestedUser) {
+        this.requestedUser = requestedUser;
     }
 }
