@@ -2,9 +2,7 @@ package edu.epic.cms.model;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 

@@ -3,7 +3,6 @@ package edu.epic.cms.controller;
 import edu.epic.cms.exception.CardCreationException;
 import edu.epic.cms.exception.CardNotFoundException;
 import edu.epic.cms.exception.CardException;
-import edu.epic.cms.model.Card;
 import edu.epic.cms.api.CardResponse;
 import edu.epic.cms.api.CreateCardRequest;
 import edu.epic.cms.api.UpdateCard;

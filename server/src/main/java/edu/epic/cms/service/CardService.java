@@ -1,6 +1,5 @@
 package edu.epic.cms.service;
 
-import edu.epic.cms.model.Card;
 import edu.epic.cms.api.CardResponse;
 import edu.epic.cms.api.UpdateCard;
 import edu.epic.cms.api.CreateCardRequest;
