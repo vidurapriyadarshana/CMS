@@ -29,10 +29,7 @@ public class CardController {
     @GetMapping
     public ResponseEntity<CommonResponse> getAllCards() {
         List<CardResponse> cards = cardService.getAllCards();
-        if (cards == null || cards.isEmpty()) {
-            throw new CardNotFoundException("No cards found");
-        }
-        return ResponseEntity.ok(CommonResponse.success(cards));
+        return ResponseEntity.ok(CommonResponse.success(cards != null ? cards : List.of()));
     }
 
     @GetMapping("/{encryptedCardNumber}")
@@ -56,7 +53,7 @@ public class CardController {
         if (isCreated) {
             return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.created("Card created successfully"));
         }
-        throw new CardCreationException("Failed to create card");
+        throw new CardException("Failed to create card");
     }
 
     @PutMapping("/{encryptedCardNumber}")

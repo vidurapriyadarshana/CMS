@@ -26,6 +26,7 @@ public class UpdateCard {
     @Min(value = 0, message = "Available cash limit must be a positive value")
     private Integer availableCashLimit;
 
+    @NotBlank(message = "Last updated user is required")
     private String lastUpdatedUser;
 
     public String getExpireDate() {

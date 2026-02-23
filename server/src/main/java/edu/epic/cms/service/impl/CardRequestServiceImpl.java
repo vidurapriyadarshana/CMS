@@ -73,7 +73,7 @@ public class CardRequestServiceImpl implements CardRequestService {
         if ("DACT".equals(status)) {
             Card card = cardRepo.getCardByNumber(encryptedCardNumber);
             if (card != null) {
-                if (!card.getCreditLimit().equals(card.getAvailableCreditLimit())) {
+                if (card.getAvailableCreditLimit() < card.getCreditLimit()) {
                     cardRequestRepo.markRequestAsFailed(encryptedCardNumber);
                     throw new OutstandingBalanceException("Cannot deactivate card: outstanding balance exists");
                 }
