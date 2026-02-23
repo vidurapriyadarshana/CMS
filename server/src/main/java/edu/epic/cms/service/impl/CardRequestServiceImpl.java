@@ -80,6 +80,15 @@ public class CardRequestServiceImpl implements CardRequestService {
             }
         }
 
-        return cardRequestRepo.updateStatusByCardNumber(encryptedCardNumber, status, approvedUser);
+        try {
+            boolean result = cardRequestRepo.updateStatusByCardNumber(encryptedCardNumber, status, approvedUser, "COMPLETE");
+            if (!result) {
+                cardRequestRepo.markRequestAsFailed(encryptedCardNumber);
+            }
+            return result;
+        } catch (Exception e) {
+            cardRequestRepo.markRequestAsFailed(encryptedCardNumber);
+            throw e;
+        }
     }
 }

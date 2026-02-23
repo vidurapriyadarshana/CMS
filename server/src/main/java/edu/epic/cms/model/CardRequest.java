@@ -32,6 +32,8 @@ public class CardRequest {
     @Size(max = 100, message = "Requested user must not exceed 100 characters")
     private String requestedUser;
 
+    private String requestStatus;
+
     public String getEncryptedCardNumber() {
         return encryptedCardNumber;
     }
@@ -94,5 +96,13 @@ public class CardRequest {
 
     public void setRequestedUser(String requestedUser) {
         this.requestedUser = requestedUser;
+    }
+
+    public String getRequestStatus() {
+        return requestStatus;
+    }
+
+    public void setRequestStatus(String requestStatus) {
+        this.requestStatus = requestStatus;
     }
 }

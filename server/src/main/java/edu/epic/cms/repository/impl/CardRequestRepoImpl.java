@@ -23,68 +23,72 @@ public class CardRequestRepoImpl implements CardRequestRepo {
         request.setRequestReasonCode(rs.getString("RequestReasonCode"));
         request.setRemark(rs.getString("Remark"));
         request.setCardNumber(rs.getString("CardNumber"));
-        request.setStatus(rs.getString("Status"));
         if (rs.getTimestamp("CreatedTime") != null) {
             request.setCreatedTime(rs.getTimestamp("CreatedTime").toLocalDateTime());
         }
-        request.setCompletionStatus(rs.getString("CompletionStatus"));
+        request.setApprovedUser(rs.getString("ApprovedUser"));
+        request.setRequestStatus(rs.getString("RequestStatus"));
+        request.setRequestedUser(rs.getString("RequestedUser"));
         return request;
     };
 
     @Override
     public List<CardRequest> getAllCardRequests() {
-        String sql = "SELECT RequestId, RequestReasonCode, Remark, CardNumber, Status, CreatedTime, CompletionStatus FROM CardRequest";
+        String sql = "SELECT RequestId, RequestReasonCode, Remark, CardNumber, CreatedTime, ApprovedUser, RequestStatus, RequestedUser FROM CardRequest";
         return jdbcTemplate.query(sql, rowMapper);
     }
 
     @Override
     public List<CardRequest> getCardRequestsByCardNumber(String cardNumber) {
-        String sql = "SELECT RequestId, RequestReasonCode, Remark, CardNumber, Status, CreatedTime, CompletionStatus FROM CardRequest WHERE CardNumber = ?";
+        String sql = "SELECT RequestId, RequestReasonCode, Remark, CardNumber, CreatedTime, ApprovedUser, RequestStatus, RequestedUser FROM CardRequest WHERE CardNumber = ?";
         return jdbcTemplate.query(sql, rowMapper, cardNumber);
     }
 
     @Override
     public boolean createCardRequest(CardRequest cardRequest) {
-        String sql = "INSERT INTO CardRequest (RequestReasonCode, Remark, CardNumber, Status) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO CardRequest (RequestReasonCode, Remark, CardNumber, RequestedUser) VALUES (?, ?, ?, ?)";
         int result = jdbcTemplate.update(sql,
                 cardRequest.getRequestReasonCode(),
                 cardRequest.getRemark(),
                 cardRequest.getCardNumber(),
-                cardRequest.getStatus());
+                cardRequest.getRequestedUser());
         return result > 0;
     }
 
     @Override
     public boolean hasPendingRequest(String cardNumber) {
-        String sql = "SELECT COUNT(*) FROM CardRequest WHERE CardNumber = ? AND CompletionStatus = 'PENDING'";
+        String sql = "SELECT COUNT(*) FROM CardRequest WHERE CardNumber = ? AND ApprovedUser IS NULL";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, cardNumber);
         return count != null && count > 0;
     }
 
     @Override
-    public boolean updateStatusByCardNumber(String cardNumber, String status) {
-        String sql = "UPDATE CardRequest SET Status = ?, CompletionStatus = 'COMPLETED' WHERE CardNumber = ? AND CompletionStatus = 'PENDING'";
-        int result = jdbcTemplate.update(sql, status, cardNumber);
+    public boolean updateStatusByCardNumber(String cardNumber, String status, String approvedUser, String requestStatus) {
+        String sql = "UPDATE Card c " +
+                     "JOIN CardRequest cr ON c.CardNumber = cr.CardNumber " +
+                     "SET c.CardStatus = ?, c.LastUpdatedUser = ?, cr.ApprovedUser = ?, cr.RequestStatus = ? " +
+                     "WHERE c.CardNumber = ? AND cr.ApprovedUser IS NULL";
+        int result = jdbcTemplate.update(sql, status, approvedUser, approvedUser, requestStatus, cardNumber);
         return result > 0;
     }
 
     @Override
     public boolean markRequestAsFailed(String cardNumber) {
-        String sql = "UPDATE CardRequest SET CompletionStatus = 'FAILED' WHERE CardNumber = ? AND CompletionStatus = 'PENDING'";
+        String sql = "UPDATE CardRequest SET ApprovedUser = 'FAILED', RequestStatus = 'FAILED' WHERE CardNumber = ? AND ApprovedUser IS NULL";
         int result = jdbcTemplate.update(sql, cardNumber);
         return result > 0;
     }
 
     @Override
     public boolean markRequestAsDeactivated(String cardNumber) {
-        String sql = "UPDATE CardRequest SET Status = 'DACT', CompletionStatus = 'DEACTIVATED' WHERE CardNumber = ? AND CompletionStatus = 'PENDING'";
+        String sql = "UPDATE CardRequest SET ApprovedUser = 'DEACTIVATED', RequestStatus = 'COMPLETE' WHERE CardNumber = ? AND ApprovedUser IS NULL";
         int result = jdbcTemplate.update(sql, cardNumber);
         return result > 0;
     }
 
     @Override
     public boolean isCardDeactivated(String cardNumber) {
-        String sql = "SELECT COUNT(*) FROM CardRequest WHERE CardNumber = ? AND CompletionStatus = 'DEACTIVATED'";
+        String sql = "SELECT COUNT(*) FROM CardRequest WHERE CardNumber = ? AND ApprovedUser = 'DEACTIVATED'";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, cardNumber);
         return count != null && count > 0;
     }
