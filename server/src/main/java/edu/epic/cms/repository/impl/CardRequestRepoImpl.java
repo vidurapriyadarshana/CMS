@@ -57,7 +57,7 @@ public class CardRequestRepoImpl implements CardRequestRepo {
 
     @Override
     public boolean hasPendingRequest(String cardNumber) {
-        String sql = "SELECT COUNT(*) FROM CardRequest WHERE CardNumber = ? AND ApprovedUser IS NULL";
+        String sql = "SELECT COUNT(*) FROM CardRequest WHERE CardNumber = ? AND RequestStatus = 'PENDING'";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, cardNumber);
         return count != null && count > 0;
     }
@@ -67,28 +67,28 @@ public class CardRequestRepoImpl implements CardRequestRepo {
         String sql = "UPDATE Card c " +
                      "JOIN CardRequest cr ON c.CardNumber = cr.CardNumber " +
                      "SET c.CardStatus = ?, c.LastUpdatedUser = ?, cr.ApprovedUser = ?, cr.RequestStatus = ? " +
-                     "WHERE c.CardNumber = ? AND cr.ApprovedUser IS NULL";
+                     "WHERE c.CardNumber = ? AND cr.RequestStatus = 'PENDING'";
         int result = jdbcTemplate.update(sql, status, approvedUser, approvedUser, requestStatus, cardNumber);
         return result > 0;
     }
 
     @Override
     public boolean markRequestAsFailed(String cardNumber) {
-        String sql = "UPDATE CardRequest SET ApprovedUser = 'FAILED', RequestStatus = 'FAILED' WHERE CardNumber = ? AND ApprovedUser IS NULL";
+        String sql = "UPDATE CardRequest SET RequestStatus = 'FAILED' WHERE CardNumber = ? AND RequestStatus = 'PENDING'";
         int result = jdbcTemplate.update(sql, cardNumber);
         return result > 0;
     }
 
     @Override
     public boolean markRequestAsDeactivated(String cardNumber) {
-        String sql = "UPDATE CardRequest SET ApprovedUser = 'DEACTIVATED', RequestStatus = 'COMPLETE' WHERE CardNumber = ? AND ApprovedUser IS NULL";
+        String sql = "UPDATE CardRequest SET RequestStatus = 'COMPLETE' WHERE CardNumber = ? AND RequestStatus = 'PENDING'";
         int result = jdbcTemplate.update(sql, cardNumber);
         return result > 0;
     }
 
     @Override
     public boolean isCardDeactivated(String cardNumber) {
-        String sql = "SELECT COUNT(*) FROM CardRequest WHERE CardNumber = ? AND ApprovedUser = 'DEACTIVATED'";
+        String sql = "SELECT COUNT(*) FROM CardRequest WHERE CardNumber = ? AND RequestStatus = 'COMPLETE' AND RequestReasonCode = 'CDCL'";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, cardNumber);
         return count != null && count > 0;
     }
