@@ -1,7 +1,6 @@
 package edu.epic.cms.repository;
 
 import edu.epic.cms.model.CardRequest;
-import edu.epic.cms.api.CardRequestReportDTO;
 
 import java.util.List;
 
@@ -13,7 +12,6 @@ public interface CardRequestRepo {
     boolean markRequestAsDeactivated(String cardNumber);
     boolean isCardDeactivated(String cardNumber);
     List<CardRequest> getAllCardRequests();
-    List<CardRequestReportDTO> getAllCardRequestsWithUserNames();
     List<CardRequest> getCardRequestsByCardNumber(String cardNumber);
 
 }

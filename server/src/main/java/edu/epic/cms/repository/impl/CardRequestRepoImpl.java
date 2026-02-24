@@ -1,7 +1,6 @@
 package edu.epic.cms.repository.impl;
 
 import edu.epic.cms.model.CardRequest;
-import edu.epic.cms.api.CardRequestReportDTO;
 import edu.epic.cms.repository.CardRequestRepo;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -40,36 +39,8 @@ public class CardRequestRepoImpl implements CardRequestRepo {
     }
 
     @Override
-    public List<CardRequestReportDTO> getAllCardRequestsWithUserNames() {
-        String sql = "SELECT cr.RequestId, cr.RequestReasonCode, cr.Remark, cr.CardNumber, cr.CreatedTime, " +
-                "cr.ApprovedUser, cr.RequestStatus, cr.RequestedUser, u1.Name as RequestedUserName, " +
-                "u2.Name as ApprovedUserName, ct.Description as RequestReasonDescription " +
-                "FROM CardRequest cr " +
-                "LEFT JOIN User u1 ON cr.RequestedUser = u1.UserName " +
-                "LEFT JOIN User u2 ON cr.ApprovedUser = u2.UserName " +
-                "LEFT JOIN CardRequestType ct ON cr.RequestReasonCode = ct.Code";
-
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
-            CardRequestReportDTO request = new CardRequestReportDTO();
-            request.setRequestId(rs.getInt("RequestId"));
-            request.setRequestReasonCode(rs.getString("RequestReasonCode"));
-            request.setRequestReasonDescription(rs.getString("RequestReasonDescription"));
-            request.setRemark(rs.getString("Remark"));
-            request.setCardNumber(rs.getString("CardNumber"));
-            if (rs.getTimestamp("CreatedTime") != null) {
-                request.setCreatedTime(rs.getTimestamp("CreatedTime").toLocalDateTime());
-            }
-            request.setApprovedUser(rs.getString("ApprovedUser"));
-            request.setApprovedUserName(rs.getString("ApprovedUserName"));
-            request.setRequestStatus(rs.getString("RequestStatus"));
-            request.setRequestedUser(rs.getString("RequestedUser"));
-            request.setRequestedUserName(rs.getString("RequestedUserName"));
-            return request;
-        });
-    }
-
-    @Override
     public List<CardRequest> getCardRequestsByCardNumber(String cardNumber) {
+
         String sql = "SELECT RequestId, RequestReasonCode, Remark, CardNumber, CreatedTime, ApprovedUser, RequestStatus, RequestedUser FROM CardRequest WHERE CardNumber = ?";
         return jdbcTemplate.query(sql, rowMapper, cardNumber);
     }
