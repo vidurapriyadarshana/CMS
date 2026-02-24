@@ -2,9 +2,9 @@ package edu.epic.cms.controller;
 
 import edu.epic.cms.exception.CardException;
 import edu.epic.cms.model.CardRequest;
-import edu.epic.cms.api.StatusUpdateRequest;
+import edu.epic.cms.api.StatusUpdateRequestDTO;
 import edu.epic.cms.service.CardRequestService;
-import edu.epic.cms.api.CommonResponse;
+import edu.epic.cms.api.CommonResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,33 +23,33 @@ public class CardRequestController {
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponse> getAllCardRequests() {
+    public ResponseEntity<CommonResponseDTO> getAllCardRequests() {
         List<CardRequest> requests = cardRequestService.getAllCardRequests();
-        return ResponseEntity.ok(CommonResponse.success(requests));
+        return ResponseEntity.ok(CommonResponseDTO.success(requests));
     }
 
     @GetMapping("/{encryptedCardNumber}")
-    public ResponseEntity<CommonResponse> getCardRequestsByCardNumber(@PathVariable String encryptedCardNumber) {
+    public ResponseEntity<CommonResponseDTO> getCardRequestsByCardNumber(@PathVariable String encryptedCardNumber) {
         List<CardRequest> requests = cardRequestService.getCardRequestsByCardNumber(encryptedCardNumber);
-        return ResponseEntity.ok(CommonResponse.success(requests));
+        return ResponseEntity.ok(CommonResponseDTO.success(requests));
     }
 
     @PostMapping
-    public ResponseEntity<CommonResponse> createCardRequest(@Valid @RequestBody CardRequest cardRequest) {
+    public ResponseEntity<CommonResponseDTO> createCardRequest(@Valid @RequestBody CardRequest cardRequest) {
         boolean isCreated = cardRequestService.createCardRequest(cardRequest);
         if (isCreated) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.created("Card request created successfully"));
+            return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponseDTO.created("Card request created successfully"));
         }
         throw new CardException("Failed to create card request");
     }
 
     @PutMapping("/{encryptedCardNumber}/status")
-    public ResponseEntity<CommonResponse> updateStatus(
+    public ResponseEntity<CommonResponseDTO> updateStatus(
             @PathVariable String encryptedCardNumber,
-            @Valid @RequestBody StatusUpdateRequest statusUpdateRequest) {
+            @Valid @RequestBody StatusUpdateRequestDTO statusUpdateRequest) {
         boolean isUpdated = cardRequestService.updateStatus(encryptedCardNumber, statusUpdateRequest.getStatus(), statusUpdateRequest.getApprovedUser());
         if (isUpdated) {
-            return ResponseEntity.ok(CommonResponse.success("Card request status updated successfully"));
+            return ResponseEntity.ok(CommonResponseDTO.success("Card request status updated successfully"));
         }
         throw new CardException("Failed to update card request status");
     }

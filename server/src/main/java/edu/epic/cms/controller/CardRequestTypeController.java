@@ -1,6 +1,6 @@
 package edu.epic.cms.controller;
 
-import edu.epic.cms.api.CommonResponse;
+import edu.epic.cms.api.CommonResponseDTO;
 import edu.epic.cms.model.CardRequestType;
 import edu.epic.cms.service.CardRequestTypeService;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +21,8 @@ public class CardRequestTypeController {
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponse> getAllCardRequestTypes() {
+    public ResponseEntity<CommonResponseDTO> getAllCardRequestTypes() {
         List<CardRequestType> types = cardRequestTypeService.getAllCardRequestTypes();
-        return ResponseEntity.ok(CommonResponse.success(types));
+        return ResponseEntity.ok(CommonResponseDTO.success(types));
     }
 }

@@ -1,6 +1,6 @@
 package edu.epic.cms.exception;
 
-import edu.epic.cms.api.CommonResponse;
+import edu.epic.cms.api.CommonResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -14,49 +14,49 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<CommonResponse> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<CommonResponseDTO> handleValidationException(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error -> 
             errors.put(error.getField(), error.getDefaultMessage())
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(CommonResponse.error(HttpStatus.BAD_REQUEST.value(), errors));
+                .body(CommonResponseDTO.error(HttpStatus.BAD_REQUEST.value(), errors));
     }
 
     @ExceptionHandler(CardNotFoundException.class)
-    public ResponseEntity<CommonResponse> handleCardNotFoundException(CardNotFoundException ex) {
+    public ResponseEntity<CommonResponseDTO> handleCardNotFoundException(CardNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(CommonResponse.notFound(ex.getMessage()));
+                .body(CommonResponseDTO.notFound(ex.getMessage()));
     }
 
     @ExceptionHandler(CardCreationException.class)
-    public ResponseEntity<CommonResponse> handleCardCreationException(CardCreationException ex) {
+    public ResponseEntity<CommonResponseDTO> handleCardCreationException(CardCreationException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(CommonResponse.badRequest(ex.getMessage()));
+                .body(CommonResponseDTO.badRequest(ex.getMessage()));
     }
 
     @ExceptionHandler(DuplicateCardException.class)
-    public ResponseEntity<CommonResponse> handleDuplicateCardException(DuplicateCardException ex) {
+    public ResponseEntity<CommonResponseDTO> handleDuplicateCardException(DuplicateCardException ex) {
         return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(CommonResponse.error(HttpStatus.CONFLICT.value(), ex.getMessage()));
+                .body(CommonResponseDTO.error(HttpStatus.CONFLICT.value(), ex.getMessage()));
     }
 
     @ExceptionHandler(CardException.class)
-    public ResponseEntity<CommonResponse> handleCardException(CardException ex) {
+    public ResponseEntity<CommonResponseDTO> handleCardException(CardException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(CommonResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()));
+                .body(CommonResponseDTO.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()));
     }
 
     @ExceptionHandler(OutstandingBalanceException.class)
-    public ResponseEntity<CommonResponse> handleOutstandingBalanceException(OutstandingBalanceException ex) {
+    public ResponseEntity<CommonResponseDTO> handleOutstandingBalanceException(OutstandingBalanceException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(CommonResponse.badRequest(ex.getMessage()));
+                .body(CommonResponseDTO.badRequest(ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<CommonResponse> handleGenericException(Exception ex) {
+    public ResponseEntity<CommonResponseDTO> handleGenericException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(CommonResponse.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), 
+                .body(CommonResponseDTO.error(HttpStatus.INTERNAL_SERVER_ERROR.value(), 
                         "An unexpected error occurred: " + ex.getMessage()));
     }
 }

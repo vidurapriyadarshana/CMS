@@ -1,7 +1,7 @@
 package edu.epic.cms.controller;
 
-import edu.epic.cms.api.CommonResponse;
-import edu.epic.cms.api.UserResponse;
+import edu.epic.cms.api.CommonResponseDTO;
+import edu.epic.cms.api.UserResponseDTO;
 import edu.epic.cms.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +21,8 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponse> getAllUsers() {
-        List<UserResponse> users = userService.getAllUsers();
-        return ResponseEntity.ok(CommonResponse.success(users));
+    public ResponseEntity<CommonResponseDTO> getAllUsers() {
+        List<UserResponseDTO> users = userService.getAllUsers();
+        return ResponseEntity.ok(CommonResponseDTO.success(users));
     }
 }

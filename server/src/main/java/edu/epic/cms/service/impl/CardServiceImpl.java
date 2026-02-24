@@ -5,15 +5,15 @@ import edu.epic.cms.exception.CardNotFoundException;
 import edu.epic.cms.exception.DuplicateCardException;
 import edu.epic.cms.exception.OutstandingBalanceException;
 import edu.epic.cms.model.Card;
-import edu.epic.cms.api.CardResponse;
-import edu.epic.cms.api.UpdateCard;
+import edu.epic.cms.api.CardResponseDTO;
+import edu.epic.cms.api.UpdateCardDTO;
 import edu.epic.cms.repository.CardRepo;
 
 import edu.epic.cms.service.CardService;
 import edu.epic.cms.util.CardEncryptionUtil;
 import edu.epic.cms.util.RsaEncryptionUtil;
 import edu.epic.cms.repository.CardRequestRepo;
-import edu.epic.cms.api.CreateCardRequest;
+import edu.epic.cms.api.CreateCardRequestDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,12 +33,12 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public List<CardResponse> getAllCards() {
+    public List<CardResponseDTO> getAllCards() {
         List<Card> cards = cardRepo.getAllCards();
-        List<CardResponse> cardResponses = new ArrayList<>();
+        List<CardResponseDTO> cardResponses = new ArrayList<>();
 
         for (Card card : cards) {
-            CardResponse response = new CardResponse();
+            CardResponseDTO response = new CardResponseDTO();
 
             String encryptedCardNumber = card.getCardNumber();
             response.setEncryptedCardNumber(encryptedCardNumber);
@@ -64,7 +64,7 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public boolean createCard(CreateCardRequest request) {
+    public boolean createCard(CreateCardRequestDTO request) {
         if (request.getCardNumber() == null || request.getCardNumber().isEmpty()) {
             throw new CardCreationException("Card number is required");
         }
@@ -113,7 +113,7 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public boolean updateCard(String encryptedCardNumber, UpdateCard updateCard) {
+    public boolean updateCard(String encryptedCardNumber, UpdateCardDTO updateCard) {
         if (!cardRepo.existsByCardNumber(encryptedCardNumber)) {
             throw new CardNotFoundException("Card not found");
         }
@@ -144,13 +144,13 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public CardResponse getCardByEncryptedNumber(String encryptedCardNumber) {
+    public CardResponseDTO getCardByEncryptedNumber(String encryptedCardNumber) {
         Card card = cardRepo.getCardByNumber(encryptedCardNumber);
         if (card == null) {
             throw new CardNotFoundException("Card not found");
         }
 
-        CardResponse response = new CardResponse();
+        CardResponseDTO response = new CardResponseDTO();
         response.setEncryptedCardNumber(card.getCardNumber());
 
         String decryptedCardNumber = CardEncryptionUtil.decrypt(card.getCardNumber());

@@ -1,6 +1,6 @@
 package edu.epic.cms.controller;
 
-import edu.epic.cms.api.CommonResponse;
+import edu.epic.cms.api.CommonResponseDTO;
 import edu.epic.cms.model.Status;
 import edu.epic.cms.service.StatusService;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +21,8 @@ public class StatusController {
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponse> getAllStatus() {
+    public ResponseEntity<CommonResponseDTO> getAllStatus() {
         List<Status> statusList = statusService.getAllStatus();
-        return ResponseEntity.ok(CommonResponse.success(statusList));
+        return ResponseEntity.ok(CommonResponseDTO.success(statusList));
     }
 }

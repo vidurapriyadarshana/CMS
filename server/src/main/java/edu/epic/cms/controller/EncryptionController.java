@@ -1,6 +1,6 @@
 package edu.epic.cms.controller;
 
-import edu.epic.cms.api.CommonResponse;
+import edu.epic.cms.api.CommonResponseDTO;
 import edu.epic.cms.util.RsaEncryptionUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,9 +21,9 @@ public class EncryptionController {
     }
 
     @GetMapping("/public-key")
-    public ResponseEntity<CommonResponse> getPublicKey() {
+    public ResponseEntity<CommonResponseDTO> getPublicKey() {
         Map<String, String> response = new HashMap<>();
         response.put("publicKey", rsaEncryptionUtil.getPublicKeyBase64());
-        return ResponseEntity.ok(CommonResponse.success(response));
+        return ResponseEntity.ok(CommonResponseDTO.success(response));
     }
 }

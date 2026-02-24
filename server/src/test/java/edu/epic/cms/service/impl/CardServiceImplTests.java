@@ -3,9 +3,9 @@ package edu.epic.cms.service.impl;
 import edu.epic.cms.exception.CardCreationException;
 import edu.epic.cms.exception.CardNotFoundException;
 import edu.epic.cms.exception.OutstandingBalanceException;
-import edu.epic.cms.api.CreateCardRequest;
+import edu.epic.cms.api.CreateCardRequestDTO;
 import edu.epic.cms.model.Card;
-import edu.epic.cms.api.UpdateCard;
+import edu.epic.cms.api.UpdateCardDTO;
 import edu.epic.cms.repository.CardRepo;
 import edu.epic.cms.repository.CardRequestRepo;
 import edu.epic.cms.util.RsaEncryptionUtil;
@@ -42,7 +42,7 @@ class CardServiceImplTests {
 
     @Test
     void createCard_ShouldThrowException_WhenLimitsAreInvalid() {
-        CreateCardRequest request = new CreateCardRequest();
+        CreateCardRequestDTO request = new CreateCardRequestDTO();
         request.setCardNumber("encrypted1234");
         when(rsaEncryptionUtil.decrypt(anyString())).thenReturn("1234567890123456");
         
@@ -64,7 +64,7 @@ class CardServiceImplTests {
 
     @Test
     void createCard_ShouldSetAvailableLimits_WhenValid() {
-        CreateCardRequest request = new CreateCardRequest();
+        CreateCardRequestDTO request = new CreateCardRequestDTO();
         request.setCardNumber("encrypted1234");
         request.setCreditLimit(1000);
         request.setCashLimit(500);
@@ -81,7 +81,7 @@ class CardServiceImplTests {
     @Test
     void updateCard_ShouldThrowException_WhenLimitsAreInvalid() {
         String cardNumber = "encrypted123";
-        UpdateCard updateCard = new UpdateCard();
+        UpdateCardDTO updateCard = new UpdateCardDTO();
         updateCard.setExpireDate("12/25");
         updateCard.setCreditLimit(1000);
         updateCard.setCashLimit(500);

@@ -1,17 +1,17 @@
 package edu.epic.cms.service;
 
-import edu.epic.cms.api.CardResponse;
-import edu.epic.cms.api.UpdateCard;
-import edu.epic.cms.api.CreateCardRequest;
+import edu.epic.cms.api.CardResponseDTO;
+import edu.epic.cms.api.UpdateCardDTO;
+import edu.epic.cms.api.CreateCardRequestDTO;
 
 
 import java.util.List;
 
 public interface CardService {
-    List<CardResponse> getAllCards();
-    boolean createCard(CreateCardRequest request);
-    boolean updateCard(String encryptedCardNumber, UpdateCard updateCard);
-    CardResponse getCardByEncryptedNumber(String encryptedCardNumber);
+    List<CardResponseDTO> getAllCards();
+    boolean createCard(CreateCardRequestDTO request);
+    boolean updateCard(String encryptedCardNumber, UpdateCardDTO updateCard);
+    CardResponseDTO getCardByEncryptedNumber(String encryptedCardNumber);
     boolean deleteCard(String encryptedCardNumber);
 }
 

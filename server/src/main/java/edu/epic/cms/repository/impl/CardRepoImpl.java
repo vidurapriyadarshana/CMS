@@ -1,7 +1,7 @@
 package edu.epic.cms.repository.impl;
 
 import edu.epic.cms.model.Card;
-import edu.epic.cms.api.UpdateCard;
+import edu.epic.cms.api.UpdateCardDTO;
 import edu.epic.cms.repository.CardRepo;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -66,7 +66,7 @@ public class CardRepoImpl implements CardRepo {
     }
 
     @Override
-    public boolean updateCard(String cardNumber, UpdateCard updateCard) {
+    public boolean updateCard(String cardNumber, UpdateCardDTO updateCard) {
         String sql = "UPDATE Card SET ExpireDate = ?, CreditLimit = ?, CashLimit = ?, " +
                 "AvailableCreditLimit = ?, AvailableCashLimit = ?, LastUpdatedUser = ? WHERE CardNumber = ?";
 
