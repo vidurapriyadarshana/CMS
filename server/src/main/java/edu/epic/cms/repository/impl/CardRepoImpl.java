@@ -2,6 +2,7 @@ package edu.epic.cms.repository.impl;
 
 import edu.epic.cms.model.Card;
 import edu.epic.cms.api.UpdateCard;
+import edu.epic.cms.api.CardReportDTO;
 import edu.epic.cms.repository.CardRepo;
 
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -36,6 +37,34 @@ public class CardRepoImpl implements CardRepo {
                 card.setLastUpdateTime(rs.getTimestamp("LastUpdateTime").toLocalDateTime());
             }
             card.setLastUpdatedUser(rs.getString("LastUpdatedUser"));
+            return card;
+        });
+    }
+
+    @Override
+    public List<CardReportDTO> getAllCardsWithUserNames() {
+        String sql = "SELECT c.CardNumber, c.ExpireDate, c.CardStatus, c.CreditLimit, c.CashLimit, " +
+                "c.AvailableCreditLimit, c.AvailableCashLimit, c.LastUpdateTime, c.LastUpdatedUser, " +
+                "u.Name as LastUpdatedUserName, s.Description as CardStatusDescription " +
+                "FROM Card c " +
+                "LEFT JOIN User u ON c.LastUpdatedUser = u.UserName " +
+                "LEFT JOIN Status s ON c.CardStatus = s.StatusCode";
+
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            CardReportDTO card = new CardReportDTO();
+            card.setCardNumber(rs.getString("CardNumber"));
+            card.setExpireDate(rs.getString("ExpireDate"));
+            card.setCardStatus(rs.getString("CardStatus"));
+            card.setCardStatusDescription(rs.getString("CardStatusDescription"));
+            card.setCreditLimit(rs.getInt("CreditLimit"));
+            card.setCashLimit(rs.getInt("CashLimit"));
+            card.setAvailableCreditLimit(rs.getInt("AvailableCreditLimit"));
+            card.setAvailableCashLimit(rs.getInt("AvailableCashLimit"));
+            if (rs.getTimestamp("LastUpdateTime") != null) {
+                card.setLastUpdateTime(rs.getTimestamp("LastUpdateTime").toLocalDateTime());
+            }
+            card.setLastUpdatedUser(rs.getString("LastUpdatedUser"));
+            card.setLastUpdatedUserName(rs.getString("LastUpdatedUserName"));
             return card;
         });
     }
@@ -114,4 +143,3 @@ public class CardRepoImpl implements CardRepo {
         return result > 0;
     }
 }
-

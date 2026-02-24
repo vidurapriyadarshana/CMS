@@ -122,9 +122,7 @@ public class CardServiceImpl implements CardService {
             throw new CardCreationException("Cannot update card: Card is deactivated");
         }
 
-        if (!cardRequestRepo.hasPendingRequest(encryptedCardNumber)) {
-            throw new CardCreationException("A pending request is required to update card details");
-        }
+        // Removed pending request validation to allow direct updates
 
         if (updateCard.getCashLimit() > updateCard.getCreditLimit()) {
             throw new CardCreationException("Cash limit cannot exceed credit limit");
