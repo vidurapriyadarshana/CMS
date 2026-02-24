@@ -28,6 +28,7 @@ export interface UpdateCardRequest {
     cashLimit: number;
     availableCreditLimit: number;
     availableCashLimit: number;
+    lastUpdatedUser: string;
 }
 
 export interface CommonResponse<T> {

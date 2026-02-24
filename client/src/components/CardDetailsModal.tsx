@@ -1,8 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import type { CardResponse, UpdateCardRequest } from '../types/card';
 import CardVisual from './CardVisual';
 import { X, Save, AlertCircle } from 'lucide-react';
+
+interface User {
+    userName: string;
+    status: string;
+    name: string;
+}
 
 interface CardDetailsModalProps {
     card: CardResponse;
@@ -17,10 +24,24 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({ card, isOpen, onClo
         creditLimit: 0,
         cashLimit: 0,
         availableCreditLimit: 0,
-        availableCashLimit: 0
+        availableCashLimit: 0,
+        lastUpdatedUser: ''
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [users, setUsers] = useState<User[]>([]);
+
+    useEffect(() => {
+        if (isOpen) {
+            axios.get('/users').then(res => {
+                if (res.data && res.data.code === 200) {
+                    setUsers(res.data.data);
+                }
+            }).catch(err => {
+                console.error('Failed to fetch users', err);
+            });
+        }
+    }, [isOpen]);
 
     useEffect(() => {
         if (card) {
@@ -29,18 +50,19 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({ card, isOpen, onClo
                 creditLimit: card.creditLimit,
                 cashLimit: card.cashLimit,
                 availableCreditLimit: card.availableCreditLimit,
-                availableCashLimit: card.availableCashLimit
+                availableCashLimit: card.availableCashLimit,
+                lastUpdatedUser: card.lastUpdatedUser || ''
             });
         }
     }, [card]);
 
     if (!isOpen) return null;
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
-            [name]: name === 'expireDate' ? value : Number(value)
+            [name]: name === 'expireDate' || name === 'lastUpdatedUser' ? value : Number(value)
         }));
     };
 
@@ -143,6 +165,23 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({ card, isOpen, onClo
                                     max={formData.creditLimit}
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                                 />
+                            </div>
+                            <div className="space-y-2 col-span-2">
+                                <label className="text-sm font-medium text-slate-700">Last Updated User</label>
+                                <select
+                                    name="lastUpdatedUser"
+                                    required
+                                    value={formData.lastUpdatedUser}
+                                    onChange={handleChange}
+                                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all appearance-none bg-white"
+                                >
+                                    <option value="" disabled>Select User</option>
+                                    {users.map(user => (
+                                        <option key={user.userName} value={user.userName}>
+                                            {user.name}
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-700">Avail. Credit</label>
