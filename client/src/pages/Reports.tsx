@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { FileText, FileSpreadsheet } from 'lucide-react';
+import { FileText, FileSpreadsheet, Loader2 } from 'lucide-react';
+import axios from 'axios';
+import { toast } from 'sonner';
 import { fetchStatusTypes, fetchRequestTypes } from '../store/slices/optionsSlice';
 import type { RootState, AppDispatch } from '../store/index';
 
@@ -14,6 +16,7 @@ const Reports = () => {
     // Request Filters
     const [requestFilterStatus, setRequestFilterStatus] = useState<string>('');
     const [requestFilterReason, setRequestFilterReason] = useState<string>('');
+    const [isDownloading, setIsDownloading] = useState(false);
 
     useEffect(() => {
         dispatch(fetchStatusTypes());
@@ -31,6 +34,51 @@ const Reports = () => {
 
         const queryString = params.toString();
         return queryString ? `${base}?${queryString}` : base;
+    };
+
+    const handleDownload = async (url: string, defaultFilename: string) => {
+        setIsDownloading(true);
+        try {
+            const response = await axios.get(url, { responseType: 'blob' });
+
+            // Try to get filename from content-disposition header
+            let filename = defaultFilename;
+            const disposition = response.headers['content-disposition'];
+            if (disposition && disposition.indexOf('filename=') !== -1) {
+                const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                const matches = filenameRegex.exec(disposition);
+                if (matches != null && matches[1]) {
+                    filename = matches[1].replace(/['"]/g, '');
+                }
+            }
+
+            // Create a blob URL and trigger download
+            const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode?.removeChild(link);
+            window.URL.revokeObjectURL(blobUrl);
+
+            toast.success(`${defaultFilename} downloaded successfully`);
+        } catch (error: any) {
+            if (error.response && error.response.data && error.response.data instanceof Blob) {
+                try {
+                    const text = await error.response.data.text();
+                    const errorData = JSON.parse(text);
+                    const message = errorData.data || errorData.message || errorData.status || 'Failed to download report';
+                    toast.error(message);
+                } catch {
+                    toast.error('Failed to download report');
+                }
+            } else {
+                toast.error(error.message || 'Failed to download report');
+            }
+        } finally {
+            setIsDownloading(false);
+        }
     };
     return (
         <div className="p-8 max-w-4xl mx-auto">
@@ -65,19 +113,21 @@ const Reports = () => {
 
                     <div className="flex gap-4">
                         <button
-                            onClick={() => window.open(getCardUrl('/reports/cards/pdf'), '_blank')}
-                            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-xl font-bold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 active:scale-95"
+                            onClick={() => handleDownload(getCardUrl('/reports/cards/pdf'), 'cards_report.pdf')}
+                            disabled={isDownloading}
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-xl font-bold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Export Cards to PDF"
                         >
-                            <FileText className="w-5 h-5" />
+                            {isDownloading ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileText className="w-5 h-5" />}
                             Download PDF
                         </button>
                         <button
-                            onClick={() => window.open(getCardUrl('/reports/cards/csv'), '_blank')}
-                            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl font-bold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 active:scale-95"
+                            onClick={() => handleDownload(getCardUrl('/reports/cards/csv'), 'cards_report.csv')}
+                            disabled={isDownloading}
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl font-bold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Export Cards to CSV"
                         >
-                            <FileSpreadsheet className="w-5 h-5" />
+                            {isDownloading ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileSpreadsheet className="w-5 h-5" />}
                             Download CSV
                         </button>
                     </div>
@@ -122,19 +172,21 @@ const Reports = () => {
 
                     <div className="flex gap-4">
                         <button
-                            onClick={() => window.open(getRequestUrl('/reports/card-requests/pdf'), '_blank')}
-                            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-xl font-bold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 active:scale-95"
+                            onClick={() => handleDownload(getRequestUrl('/reports/card-requests/pdf'), 'card_requests_report.pdf')}
+                            disabled={isDownloading}
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-rose-50 text-rose-700 hover:bg-rose-100 rounded-xl font-bold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Export Card Requests to PDF"
                         >
-                            <FileText className="w-5 h-5" />
+                            {isDownloading ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileText className="w-5 h-5" />}
                             Download PDF
                         </button>
                         <button
-                            onClick={() => window.open(getRequestUrl('/reports/card-requests/csv'), '_blank')}
-                            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl font-bold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 active:scale-95"
+                            onClick={() => handleDownload(getRequestUrl('/reports/card-requests/csv'), 'card_requests_report.csv')}
+                            disabled={isDownloading}
+                            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-xl font-bold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Export Card Requests to CSV"
                         >
-                            <FileSpreadsheet className="w-5 h-5" />
+                            {isDownloading ? <Loader2 className="w-5 h-5 animate-spin" /> : <FileSpreadsheet className="w-5 h-5" />}
                             Download CSV
                         </button>
                     </div>
