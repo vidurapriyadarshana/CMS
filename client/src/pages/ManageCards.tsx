@@ -5,6 +5,7 @@ import { Plus, Search, FileText, FileSpreadsheet } from 'lucide-react';
 import { toast } from 'sonner';
 import type { CardResponse, UpdateCardRequest, CardRequest } from '../types/card';
 import { fetchCards, updateCard, createCard, deleteCard, clearError } from '../store/slices/cardSlice';
+import { fetchStatusTypes } from '../store/slices/optionsSlice';
 import type { RootState, AppDispatch } from '../store/index';
 import CardTable from '../components/CardTable';
 import CardDetailsModal from '../components/CardDetailsModal';
@@ -15,11 +16,13 @@ import { Loader2 } from 'lucide-react';
 const ManageCards = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { cards, loading, error } = useSelector((state: RootState) => state.cards);
+    const { statusTypes } = useSelector((state: RootState) => state.options);
 
     const [selectedCard, setSelectedCard] = useState<CardResponse | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [statusFilter, setStatusFilter] = useState('');
 
     // Delete state
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -32,8 +35,12 @@ const ManageCards = () => {
     });
 
     useEffect(() => {
-        dispatch(fetchCards());
+        dispatch(fetchStatusTypes());
     }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(fetchCards(statusFilter || undefined));
+    }, [dispatch, statusFilter]);
 
     // Clear error on unmount
     useEffect(() => {
@@ -51,6 +58,7 @@ const ManageCards = () => {
         try {
             await dispatch(updateCard({ encryptedCardNumber, data })).unwrap();
             toast.success('Card updated successfully');
+            dispatch(fetchCards(statusFilter || undefined));
         } catch (err) {
             console.error('Update failed', err);
             toast.error(typeof err === 'string' ? err : 'Failed to update card');
@@ -63,6 +71,7 @@ const ManageCards = () => {
             await dispatch(createCard(data)).unwrap();
             toast.success('Card created successfully');
             setIsCreateModalOpen(false);
+            dispatch(fetchCards(statusFilter || undefined));
         } catch (err) {
             console.error('Create failed', err);
             toast.error(typeof err === 'string' ? err : 'Failed to create card');
@@ -84,6 +93,7 @@ const ManageCards = () => {
             toast.success('Card deleted successfully');
             setIsDeleteModalOpen(false);
             setCardToDelete(null);
+            dispatch(fetchCards(statusFilter || undefined));
         } catch (err) {
             console.error('Delete failed', err);
             toast.error(typeof err === 'string' ? err : 'Failed to delete card');
@@ -98,17 +108,31 @@ const ManageCards = () => {
                     <p className="text-slate-500 mt-2 text-base">View and manage all customer credit cards.</p>
                 </div>
                 <div className="text-right flex items-center gap-6">
-                    <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <Search className="h-4 w-4 text-slate-400" />
+                    <div className="flex gap-3">
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                            className="bg-white border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm py-2.5 pl-3 pr-8 text-slate-700 cursor-pointer"
+                        >
+                            <option value="">All Statuses</option>
+                            {statusTypes.map((status) => (
+                                <option key={status.statusCode} value={status.statusCode}>
+                                    {status.description}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="relative">
+                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                <Search className="h-4 w-4 text-slate-400" />
+                            </div>
+                            <input
+                                type="text"
+                                placeholder="Search last 4 digits..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                                className="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm w-48"
+                            />
                         </div>
-                        <input
-                            type="text"
-                            placeholder="Search last 4 digits..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                            className="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm w-55"
-                        />
                     </div>
                     <button
                         onClick={() => window.open('/reports/cards/pdf', '_blank')}
@@ -148,7 +172,7 @@ const ManageCards = () => {
                 <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center text-red-600 shadow-sm">
                     <p className="text-lg font-medium">{error}</p>
                     <button
-                        onClick={() => dispatch(fetchCards())}
+                        onClick={() => dispatch(fetchCards(statusFilter || undefined))}
                         className="mt-6 px-6 py-2.5 bg-white border border-red-200 rounded-xl text-sm font-semibold hover:bg-red-50 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                     >
                         Try Again

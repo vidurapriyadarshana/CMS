@@ -17,9 +17,10 @@ const initialState: CardState = {
 
 export const fetchCards = createAsyncThunk(
     'cards/fetchCards',
-    async (_, { rejectWithValue }) => {
+    async (cardStatus: string | void, { rejectWithValue }) => {
         try {
-            const response = await axios.get<CommonResponse<CardResponse[]>>('/cards');
+            const url = cardStatus ? `/cards?cardStatus=${cardStatus}` : '/cards';
+            const response = await axios.get<CommonResponse<CardResponse[]>>(url);
             if (response.data.code === 200 && Array.isArray(response.data.data)) {
                 // Sort inside the thunk to keep reducer pure if possible, or just pass data.
                 // Let's sort here for convenience.
@@ -45,13 +46,12 @@ export const fetchCards = createAsyncThunk(
 
 export const updateCard = createAsyncThunk(
     'cards/updateCard',
-    async ({ encryptedCardNumber, data }: { encryptedCardNumber: string; data: UpdateCardRequest }, { rejectWithValue, dispatch }) => {
+    async ({ encryptedCardNumber, data }: { encryptedCardNumber: string; data: UpdateCardRequest }, { rejectWithValue }) => {
         try {
             const response = await axios.put<CommonResponse<string>>(`/cards/${encryptedCardNumber}`, data);
             if (response.data.code === 200) {
                 // We could return the data to update local state, or re-fetch.
-                // Re-fetching ensures consistency.
-                dispatch(fetchCards());
+                // Re-fetching ensures consistency, now handled in component to pass filter
                 return response.data.message;
             } else {
                 return rejectWithValue(response.data.status || 'Update failed');
@@ -70,11 +70,10 @@ export const updateCard = createAsyncThunk(
 
 export const createCard = createAsyncThunk(
     'cards/createCard',
-    async (cardData: CardRequest, { rejectWithValue, dispatch }) => {
+    async (cardData: CardRequest, { rejectWithValue }) => {
         try {
             const response = await axios.post<CommonResponse<string>>('/cards', cardData);
             if (response.data.code === 201) { // Assuming 201 Created
-                dispatch(fetchCards());
                 return response.data.message;
             } else {
                 return rejectWithValue(response.data.status || 'Creation failed');
@@ -91,11 +90,10 @@ export const createCard = createAsyncThunk(
 
 export const deleteCard = createAsyncThunk(
     'cards/deleteCard',
-    async (encryptedCardNumber: string, { rejectWithValue, dispatch }) => {
+    async (encryptedCardNumber: string, { rejectWithValue }) => {
         try {
             const response = await axios.delete<CommonResponse<string>>(`/cards/${encryptedCardNumber}`);
             if (response.data.code === 200) {
-                dispatch(fetchCards());
                 return response.data.message;
             } else {
                 return rejectWithValue(response.data.status || 'Deletion failed');
