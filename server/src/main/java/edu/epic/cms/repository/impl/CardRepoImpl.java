@@ -19,11 +19,17 @@ public class CardRepoImpl implements CardRepo {
     }
 
     @Override
-    public List<Card> getAllCards() {
-        String sql = "SELECT CardNumber, ExpireDate, CardStatus, CreditLimit, CashLimit, " +
-                "AvailableCreditLimit, AvailableCashLimit, LastUpdateTime, LastUpdatedUser FROM Card";
+    public List<Card> getAllCards(String cardStatus) {
+        StringBuilder sql = new StringBuilder("SELECT CardNumber, ExpireDate, CardStatus, CreditLimit, CashLimit, " +
+                "AvailableCreditLimit, AvailableCashLimit, LastUpdateTime, LastUpdatedUser FROM Card WHERE 1=1");
+        
+        List<Object> params = new java.util.ArrayList<>();
+        if (cardStatus != null && !cardStatus.isEmpty()) {
+            sql.append(" AND CardStatus = ?");
+            params.add(cardStatus);
+        }
 
-        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+        return jdbcTemplate.query(sql.toString(), (rs, rowNum) -> {
             Card card = new Card();
             card.setCardNumber(rs.getString("CardNumber"));
             card.setExpireDate(rs.getString("ExpireDate"));
@@ -37,7 +43,7 @@ public class CardRepoImpl implements CardRepo {
             }
             card.setLastUpdatedUser(rs.getString("LastUpdatedUser"));
             return card;
-        });
+        }, params.toArray());
     }
 
     @Override

@@ -8,7 +8,7 @@ import edu.epic.cms.api.CreateCardRequestDTO;
 import java.util.List;
 
 public interface CardService {
-    List<CardResponseDTO> getAllCards();
+    List<CardResponseDTO> getAllCards(String cardStatus);
     boolean createCard(CreateCardRequestDTO request);
     boolean updateCard(String encryptedCardNumber, UpdateCardDTO updateCard);
     CardResponseDTO getCardByEncryptedNumber(String encryptedCardNumber);

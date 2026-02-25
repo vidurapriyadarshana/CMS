@@ -7,7 +7,7 @@ import java.util.List;
 
 
 public interface CardRepo {
-    List<Card> getAllCards();
+    List<Card> getAllCards(String cardStatus);
     boolean createCard(Card card);
     boolean existsByCardNumber(String cardNumber);
     boolean updateCard(String cardNumber, UpdateCardDTO updateCard);

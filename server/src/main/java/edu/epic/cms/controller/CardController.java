@@ -25,8 +25,8 @@ public class CardController {
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponseDTO> getAllCards() {
-        List<CardResponseDTO> cards = cardService.getAllCards();
+    public ResponseEntity<CommonResponseDTO> getAllCards(@RequestParam(required = false) String cardStatus) {
+        List<CardResponseDTO> cards = cardService.getAllCards(cardStatus);
         return ResponseEntity.ok(CommonResponseDTO.success(cards != null ? cards : List.of()));
     }
 

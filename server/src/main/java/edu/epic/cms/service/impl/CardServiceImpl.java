@@ -33,8 +33,8 @@ public class CardServiceImpl implements CardService {
     }
 
     @Override
-    public List<CardResponseDTO> getAllCards() {
-        List<Card> cards = cardRepo.getAllCards();
+    public List<CardResponseDTO> getAllCards(String cardStatus) {
+        List<Card> cards = cardRepo.getAllCards(cardStatus);
         List<CardResponseDTO> cardResponses = new ArrayList<>();
 
         for (Card card : cards) {
