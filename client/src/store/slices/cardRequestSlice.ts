@@ -18,9 +18,27 @@ const initialState: CardRequestState = {
 // Async thunk for fetching card requests
 export const fetchCardRequests = createAsyncThunk(
     'cardRequests/fetchCardRequests',
-    async (_, { rejectWithValue }) => {
+    async (
+        filters: { requestStatus?: string; requestReasonCode?: string } | void,
+        { rejectWithValue }
+    ) => {
         try {
-            const response = await axios.get<CommonResponse<CardRequestData[]>>('/card-requests');
+            let url = '/card-requests';
+            const params = new URLSearchParams();
+
+            if (filters?.requestStatus && filters.requestStatus !== 'ALL') {
+                params.append('requestStatus', filters.requestStatus);
+            }
+            if (filters?.requestReasonCode && filters.requestReasonCode !== 'ALL') {
+                params.append('requestReasonCode', filters.requestReasonCode);
+            }
+
+            const queryString = params.toString();
+            if (queryString) {
+                url += `?${queryString}`;
+            }
+
+            const response = await axios.get<CommonResponse<CardRequestData[]>>(url);
             if (response.data.code === 200 && Array.isArray(response.data.data)) {
                 // Return sorted by requestId descending
                 return response.data.data.sort((a, b) => b.requestId - a.requestId);

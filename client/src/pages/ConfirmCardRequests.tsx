@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchCardRequests } from '../store/slices/cardRequestSlice';
+import { fetchRequestTypes } from '../store/slices/optionsSlice';
 import type { RootState, AppDispatch } from '../store/index';
 import type { CardRequestData } from '../types/card';
 import ConfirmRequestTable from '../components/ConfirmRequestTable';
@@ -10,21 +11,26 @@ import ChangeStatusModal from '../components/ChangeStatusModal';
 const ConfirmCardRequests = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { requests, loading, error } = useSelector((state: RootState) => state.cardRequests);
+    const { requestTypes } = useSelector((state: RootState) => state.options);
 
     const [selectedRequest, setSelectedRequest] = useState<CardRequestData | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [filterStatus, setFilterStatus] = useState<string>('ALL');
+    const [filterReasonCode, setFilterReasonCode] = useState<string>('ALL');
 
-    const filteredRequests = requests.filter(request => {
-        if (filterStatus === 'ALL') return true;
-        // Default to PENDING if requestStatus is null/undefined
-        const status = request.requestStatus || 'PENDING';
-        return status === filterStatus;
-    });
+    // Remove frontend filtering, use backend requests directly
+    const filteredRequests = requests;
 
     useEffect(() => {
-        dispatch(fetchCardRequests());
+        dispatch(fetchRequestTypes());
     }, [dispatch]);
+
+    useEffect(() => {
+        dispatch(fetchCardRequests({
+            requestStatus: filterStatus,
+            requestReasonCode: filterReasonCode
+        }));
+    }, [dispatch, filterStatus, filterReasonCode]);
 
     const handleOpenStatusModal = (request: CardRequestData) => {
         setSelectedRequest(request);
@@ -39,19 +45,36 @@ const ConfirmCardRequests = () => {
                     <p className="text-slate-500 mt-2 text-base">Manage and update the status of incoming card requests.</p>
                 </div>
                 <div className="text-right flex items-center gap-6">
-                    <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-xl border border-slate-200 shadow-sm">
-                        <label className="text-sm font-semibold text-slate-600">Filter By:</label>
-                        <select
-                            value={filterStatus}
-                            onChange={(e) => setFilterStatus(e.target.value)}
-                            className="bg-transparent text-sm font-medium text-slate-900 focus:outline-none cursor-pointer"
-                        >
-                            <option value="ALL">All Requests</option>
-                            <option value="PENDING">Pending</option>
-                            <option value="COMPLETE">Completed</option>
-                            <option value="FAILED">Failed</option>
-                            <option value="DEACTIVATED">Deactivated</option>
-                        </select>
+                    <div className="flex gap-4">
+                        <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-xl border border-slate-200 shadow-sm">
+                            <label className="text-sm font-semibold text-slate-600">Reason:</label>
+                            <select
+                                value={filterReasonCode}
+                                onChange={(e) => setFilterReasonCode(e.target.value)}
+                                className="bg-transparent text-sm font-medium text-slate-900 focus:outline-none cursor-pointer"
+                            >
+                                <option value="ALL">All Reasons</option>
+                                {requestTypes.map((type) => (
+                                    <option key={type.code} value={type.code}>
+                                        {type.description}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex items-center gap-3 bg-white px-4 py-2.5 rounded-xl border border-slate-200 shadow-sm">
+                            <label className="text-sm font-semibold text-slate-600">Status:</label>
+                            <select
+                                value={filterStatus}
+                                onChange={(e) => setFilterStatus(e.target.value)}
+                                className="bg-transparent text-sm font-medium text-slate-900 focus:outline-none cursor-pointer"
+                            >
+                                <option value="ALL">All Statuses</option>
+                                <option value="PENDING">Pending</option>
+                                <option value="COMPLETE">Completed</option>
+                                <option value="FAILED">Failed</option>
+                                <option value="DEACTIVATED">Deactivated</option>
+                            </select>
+                        </div>
                     </div>
                     <div className="bg-white px-5 py-2.5 rounded-xl border border-slate-200 shadow-sm flex flex-col items-end">
                         <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest leading-none mb-1">Total Requests</span>
@@ -68,7 +91,10 @@ const ConfirmCardRequests = () => {
                 <div className="bg-red-50 border border-red-200 rounded-xl p-8 text-center text-red-600 shadow-sm">
                     <p className="text-lg font-medium">{error}</p>
                     <button
-                        onClick={() => dispatch(fetchCardRequests())}
+                        onClick={() => dispatch(fetchCardRequests({
+                            requestStatus: filterStatus,
+                            requestReasonCode: filterReasonCode
+                        }))}
                         className="mt-6 px-6 py-2.5 bg-white border border-red-200 rounded-xl text-sm font-semibold hover:bg-red-50 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                     >
                         Try Again
@@ -88,7 +114,10 @@ const ConfirmCardRequests = () => {
                     setSelectedRequest(null);
                 }}
                 request={selectedRequest}
-                onStatusUpdated={() => dispatch(fetchCardRequests())}
+                onStatusUpdated={() => dispatch(fetchCardRequests({
+                    requestStatus: filterStatus,
+                    requestReasonCode: filterReasonCode
+                }))}
             />
         </div>
     );
