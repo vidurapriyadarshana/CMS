@@ -53,6 +53,12 @@ public class GlobalExceptionHandler {
                 .body(CommonResponseDTO.badRequest(ex.getMessage()));
     }
 
+    @ExceptionHandler(ReportDataNotFoundException.class)
+    public ResponseEntity<CommonResponseDTO> handleReportDataNotFoundException(ReportDataNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(CommonResponseDTO.notFound(ex.getMessage()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonResponseDTO> handleGenericException(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

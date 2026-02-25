@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.ByteArrayInputStream;
@@ -22,7 +23,8 @@ public class ReportController {
     }
 
     @GetMapping("/cards/pdf")
-    public ResponseEntity<InputStreamResource> downloadCardPdf(@org.springframework.web.bind.annotation.RequestParam(required = false) String cardStatus) {
+    public ResponseEntity<InputStreamResource> downloadCardPdf(
+            @RequestParam(required = false) String cardStatus) {
         ByteArrayInputStream bis = reportService.generateCardReportPdf(cardStatus);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=card_report.pdf");
@@ -34,7 +36,8 @@ public class ReportController {
     }
 
     @GetMapping("/cards/csv")
-    public ResponseEntity<InputStreamResource> downloadCardCsv(@org.springframework.web.bind.annotation.RequestParam(required = false) String cardStatus) {
+    public ResponseEntity<InputStreamResource> downloadCardCsv(
+            @RequestParam(required = false) String cardStatus) {
         ByteArrayInputStream bis = reportService.generateCardReportCsv(cardStatus);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=card_report.csv");
@@ -47,8 +50,8 @@ public class ReportController {
 
     @GetMapping("/card-requests/pdf")
     public ResponseEntity<InputStreamResource> downloadCardRequestPdf(
-            @org.springframework.web.bind.annotation.RequestParam(required = false) String requestReasonCode,
-            @org.springframework.web.bind.annotation.RequestParam(required = false) String requestStatus) {
+            @RequestParam(required = false) String requestReasonCode,
+            @RequestParam(required = false) String requestStatus) {
         ByteArrayInputStream bis = reportService.generateCardRequestReportPdf(requestReasonCode, requestStatus);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=card_request_report.pdf");
@@ -61,8 +64,8 @@ public class ReportController {
 
     @GetMapping("/card-requests/csv")
     public ResponseEntity<InputStreamResource> downloadCardRequestCsv(
-            @org.springframework.web.bind.annotation.RequestParam(required = false) String requestReasonCode,
-            @org.springframework.web.bind.annotation.RequestParam(required = false) String requestStatus) {
+            @RequestParam(required = false) String requestReasonCode,
+            @RequestParam(required = false) String requestStatus) {
         ByteArrayInputStream bis = reportService.generateCardRequestReportCsv(requestReasonCode, requestStatus);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=card_request_report.csv");
