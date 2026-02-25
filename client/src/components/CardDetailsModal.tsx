@@ -60,9 +60,23 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({ card, isOpen, onClo
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
+
+        if (name === 'expireDate') {
+            if (value) {
+                const [year, month] = value.split('-');
+                if (year && month) {
+                    const formattedDate = `${month}/${year.slice(2)}`;
+                    setFormData(prev => ({ ...prev, expireDate: formattedDate }));
+                }
+            } else {
+                setFormData(prev => ({ ...prev, expireDate: '' }));
+            }
+            return;
+        }
+
         setFormData(prev => ({
             ...prev,
-            [name]: name === 'expireDate' || name === 'lastUpdatedUser' ? value : Number(value)
+            [name]: name === 'lastUpdatedUser' ? value : Number(value)
         }));
     };
 
@@ -131,15 +145,13 @@ const CardDetailsModal: React.FC<CardDetailsModalProps> = ({ card, isOpen, onClo
                             <div className="space-y-2">
                                 <label className="text-sm font-medium text-slate-700">Expire Date (MM/YY)</label>
                                 <input
-                                    type="text"
+                                    type="month"
                                     name="expireDate"
-                                    value={formData.expireDate}
+                                    min={new Date().toISOString().slice(0, 7)}
+                                    value={formData.expireDate && formData.expireDate.includes('/') ? `20${formData.expireDate.split('/')[1]}-${formData.expireDate.split('/')[0]}` : ''}
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
-                                    placeholder="MM/YY"
                                     required
-                                    pattern="(0[1-9]|1[0-2])\/[0-9]{2}"
-                                    maxLength={5}
                                 />
                             </div>
                             <div className="space-y-2">

@@ -95,6 +95,19 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({ isOpen, onClose, onCr
             return;
         }
 
+        if (name === 'expireDate') {
+            if (value) {
+                const [year, month] = value.split('-');
+                if (year && month) {
+                    const formattedDate = `${month}/${year.slice(2)}`;
+                    setFormData(prev => ({ ...prev, expireDate: formattedDate }));
+                }
+            } else {
+                setFormData(prev => ({ ...prev, expireDate: '' }));
+            }
+            return;
+        }
+
         setFormData(prev => ({
             ...prev,
             [name]: name.includes('Limit') ? Number(value) : value
@@ -139,12 +152,11 @@ const CreateCardModal: React.FC<CreateCardModalProps> = ({ isOpen, onClose, onCr
                             <div>
                                 <label className="block text-sm font-medium text-slate-700 mb-1">Expiry Date</label>
                                 <input
-                                    type="text"
+                                    type="month"
                                     name="expireDate"
                                     required
-                                    placeholder="MM/YY"
-                                    pattern="(0[1-9]|1[0-2])\/[0-9]{2}"
-                                    value={formData.expireDate}
+                                    min={new Date().toISOString().slice(0, 7)}
+                                    value={formData.expireDate && formData.expireDate.includes('/') ? `20${formData.expireDate.split('/')[1]}-${formData.expireDate.split('/')[0]}` : ''}
                                     onChange={handleChange}
                                     className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
                                 />
