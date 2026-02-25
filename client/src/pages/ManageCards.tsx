@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Plus, Search, FileText, FileSpreadsheet } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import { toast } from 'sonner';
 import type { CardResponse, UpdateCardRequest, CardRequest } from '../types/card';
 import { fetchCards, updateCard, createCard, deleteCard, clearError } from '../store/slices/cardSlice';
@@ -134,22 +134,6 @@ const ManageCards = () => {
                             />
                         </div>
                     </div>
-                    <button
-                        onClick={() => window.open('/reports/cards/pdf', '_blank')}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-semibold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 active:scale-95"
-                        title="Export to PDF"
-                    >
-                        <FileText className="w-5 h-5" />
-                        PDF
-                    </button>
-                    <button
-                        onClick={() => window.open('/reports/cards/csv', '_blank')}
-                        className="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-semibold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 active:scale-95"
-                        title="Export to CSV"
-                    >
-                        <FileSpreadsheet className="w-5 h-5" />
-                        CSV
-                    </button>
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
                         className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 active:scale-95"

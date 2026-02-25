@@ -20,6 +20,9 @@ const Layout = () => {
                     <Link to="/confirm-card-requests" className="block py-2.5 px-4 rounded-lg transition-colors font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-700">
                         Confirm Requests
                     </Link>
+                    <Link to="/reports" className="block py-2.5 px-4 rounded-lg transition-colors font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-700">
+                        Reports & Exports
+                    </Link>
                 </nav>
                 <div className="p-6 text-xs text-slate-400 font-medium text-center border-t border-slate-100">
                     Epic Lanka System v1.0.0
