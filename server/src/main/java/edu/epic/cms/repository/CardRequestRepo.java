@@ -11,7 +11,7 @@ public interface CardRequestRepo {
     boolean markRequestAsFailed(String cardNumber, String approvedUser);
     boolean markRequestAsDeactivated(String cardNumber);
     boolean isCardDeactivated(String cardNumber);
-    List<CardRequest> getAllCardRequests();
+    List<CardRequest> getAllCardRequests(String requestReasonCode, String requestStatus);
     List<CardRequest> getCardRequestsByCardNumber(String cardNumber);
 
 }

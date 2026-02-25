@@ -24,8 +24,8 @@ public class CardRequestServiceImpl implements CardRequestService {
     }
 
     @Override
-    public List<CardRequest> getAllCardRequests() {
-        List<CardRequest> requests = cardRequestRepo.getAllCardRequests();
+    public List<CardRequest> getAllCardRequests(String requestReasonCode, String requestStatus) {
+        List<CardRequest> requests = cardRequestRepo.getAllCardRequests(requestReasonCode, requestStatus);
         maskCardNumbers(requests);
         return requests;
     }

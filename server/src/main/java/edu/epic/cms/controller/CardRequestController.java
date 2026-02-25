@@ -23,8 +23,10 @@ public class CardRequestController {
     }
 
     @GetMapping
-    public ResponseEntity<CommonResponseDTO> getAllCardRequests() {
-        List<CardRequest> requests = cardRequestService.getAllCardRequests();
+    public ResponseEntity<CommonResponseDTO> getAllCardRequests(
+            @RequestParam(required = false) String requestReasonCode,
+            @RequestParam(required = false) String requestStatus) {
+        List<CardRequest> requests = cardRequestService.getAllCardRequests(requestReasonCode, requestStatus);
         return ResponseEntity.ok(CommonResponseDTO.success(requests));
     }
 

@@ -40,7 +40,7 @@ class CardRequestServiceImplTests {
         CardRequest request2 = new CardRequest();
         request2.setCardNumber("encrypted2");
 
-        when(cardRequestRepo.getAllCardRequests()).thenReturn(Arrays.asList(request1, request2));
+        when(cardRequestRepo.getAllCardRequests(null, null)).thenReturn(Arrays.asList(request1, request2));
 
         try (MockedStatic<CardEncryptionUtil> mockedEncryption = mockStatic(CardEncryptionUtil.class)) {
             mockedEncryption.when(() -> CardEncryptionUtil.decrypt("encrypted1")).thenReturn("1234567890123456");
@@ -49,7 +49,7 @@ class CardRequestServiceImplTests {
             mockedEncryption.when(() -> CardEncryptionUtil.decrypt("encrypted2")).thenReturn("6543210987654321");
             mockedEncryption.when(() -> CardEncryptionUtil.maskCardNumber("6543210987654321")).thenReturn("654321******4321");
 
-            List<CardRequest> result = cardRequestService.getAllCardRequests();
+            List<CardRequest> result = cardRequestService.getAllCardRequests(null, null);
 
             assertEquals(2, result.size());
             assertEquals("123456******3456", result.get(0).getCardNumber());

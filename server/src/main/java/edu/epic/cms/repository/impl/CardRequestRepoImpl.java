@@ -33,9 +33,21 @@ public class CardRequestRepoImpl implements CardRequestRepo {
     };
 
     @Override
-    public List<CardRequest> getAllCardRequests() {
-        String sql = "SELECT RequestId, RequestReasonCode, Remark, CardNumber, CreatedTime, ApprovedUser, RequestStatus, RequestedUser FROM CardRequest";
-        return jdbcTemplate.query(sql, rowMapper);
+    public List<CardRequest> getAllCardRequests(String requestReasonCode, String requestStatus) {
+        StringBuilder sql = new StringBuilder("SELECT RequestId, RequestReasonCode, Remark, CardNumber, CreatedTime, ApprovedUser, RequestStatus, RequestedUser FROM CardRequest WHERE 1=1");
+        List<Object> params = new java.util.ArrayList<>();
+
+        if (requestReasonCode != null && !requestReasonCode.isEmpty()) {
+            sql.append(" AND RequestReasonCode = ?");
+            params.add(requestReasonCode);
+        }
+
+        if (requestStatus != null && !requestStatus.isEmpty()) {
+            sql.append(" AND RequestStatus = ?");
+            params.add(requestStatus);
+        }
+
+        return jdbcTemplate.query(sql.toString(), rowMapper, params.toArray());
     }
 
     @Override
