@@ -6,6 +6,6 @@ import edu.epic.cms.api.CardRequestReportDTO;
 import java.util.List;
 
 public interface ReportRepo {
-    List<CardReportDTO> getAllCardsWithUserNames();
-    List<CardRequestReportDTO> getAllCardRequestsWithUserNames();
+    List<CardReportDTO> getAllCardsWithUserNames(String cardStatus);
+    List<CardRequestReportDTO> getAllCardRequestsWithUserNames(String requestReasonCode, String requestStatus);
 }

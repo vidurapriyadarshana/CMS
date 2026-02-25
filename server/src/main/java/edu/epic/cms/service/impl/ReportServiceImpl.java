@@ -20,26 +20,26 @@ public class ReportServiceImpl implements ReportService {
     }
 
     @Override
-    public ByteArrayInputStream generateCardReportPdf() {
-        List<CardReportDTO> cards = reportRepo.getAllCardsWithUserNames();
-        return ReportGeneratorUtil.cardReportToPdf(cards);
+    public ByteArrayInputStream generateCardReportPdf(String cardStatus) {
+        List<CardReportDTO> cards = reportRepo.getAllCardsWithUserNames(cardStatus);
+        return ReportGeneratorUtil.cardReportToPdf(cards, cardStatus);
     }
 
     @Override
-    public ByteArrayInputStream generateCardReportCsv() {
-        List<CardReportDTO> cards = reportRepo.getAllCardsWithUserNames();
+    public ByteArrayInputStream generateCardReportCsv(String cardStatus) {
+        List<CardReportDTO> cards = reportRepo.getAllCardsWithUserNames(cardStatus);
         return ReportGeneratorUtil.cardReportToCsv(cards);
     }
 
     @Override
-    public ByteArrayInputStream generateCardRequestReportPdf() {
-        List<CardRequestReportDTO> requests = reportRepo.getAllCardRequestsWithUserNames();
-        return ReportGeneratorUtil.cardRequestReportToPdf(requests);
+    public ByteArrayInputStream generateCardRequestReportPdf(String requestReasonCode, String requestStatus) {
+        List<CardRequestReportDTO> requests = reportRepo.getAllCardRequestsWithUserNames(requestReasonCode, requestStatus);
+        return ReportGeneratorUtil.cardRequestReportToPdf(requests, requestReasonCode, requestStatus);
     }
 
     @Override
-    public ByteArrayInputStream generateCardRequestReportCsv() {
-        List<CardRequestReportDTO> requests = reportRepo.getAllCardRequestsWithUserNames();
+    public ByteArrayInputStream generateCardRequestReportCsv(String requestReasonCode, String requestStatus) {
+        List<CardRequestReportDTO> requests = reportRepo.getAllCardRequestsWithUserNames(requestReasonCode, requestStatus);
         return ReportGeneratorUtil.cardRequestReportToCsv(requests);
     }
 }

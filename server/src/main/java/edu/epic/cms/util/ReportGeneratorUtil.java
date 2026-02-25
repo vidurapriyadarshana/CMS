@@ -21,7 +21,7 @@ public class ReportGeneratorUtil {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public static ByteArrayInputStream cardReportToPdf(List<CardReportDTO> cards) {
+    public static ByteArrayInputStream cardReportToPdf(List<CardReportDTO> cards, String cardStatus) {
         Document document = new Document(PageSize.A4.rotate());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -36,6 +36,19 @@ public class ReportGeneratorUtil {
             Paragraph p = new Paragraph("Card Report", font);
             p.setAlignment(Paragraph.ALIGN_CENTER);
             document.add(p);
+
+            Font filterFont = FontFactory.getFont(FontFactory.HELVETICA);
+            filterFont.setSize(10);
+            
+            StringBuilder filters = new StringBuilder();
+            filters.append("Generated Date: ").append(java.time.LocalDateTime.now().format(DATE_TIME_FORMATTER));
+            if (cardStatus != null && !cardStatus.isEmpty()) {
+                filters.append(" | Filter [Status: ").append(cardStatus).append("]");
+            }
+            
+            Paragraph filterPara = new Paragraph(filters.toString(), filterFont);
+            filterPara.setAlignment(Paragraph.ALIGN_CENTER);
+            document.add(filterPara);
 
             PdfPTable table = new PdfPTable(9);
             table.setWidthPercentage(100f);
@@ -84,7 +97,7 @@ public class ReportGeneratorUtil {
         }
     }
 
-    public static ByteArrayInputStream cardRequestReportToPdf(List<CardRequestReportDTO> requests) {
+    public static ByteArrayInputStream cardRequestReportToPdf(List<CardRequestReportDTO> requests, String reasonCode, String status) {
         Document document = new Document(PageSize.A4.rotate());
         ByteArrayOutputStream out = new ByteArrayOutputStream();
 
@@ -99,6 +112,22 @@ public class ReportGeneratorUtil {
             Paragraph p = new Paragraph("Card Request Report", font);
             p.setAlignment(Paragraph.ALIGN_CENTER);
             document.add(p);
+
+            Font filterFont = FontFactory.getFont(FontFactory.HELVETICA);
+            filterFont.setSize(10);
+
+            StringBuilder filters = new StringBuilder();
+            filters.append("Generated Date: ").append(java.time.LocalDateTime.now().format(DATE_TIME_FORMATTER));
+            if (reasonCode != null && !reasonCode.isEmpty()) {
+                filters.append(" | Filter [Reason: ").append(reasonCode).append("]");
+            }
+            if (status != null && !status.isEmpty()) {
+                filters.append(" | Filter [Status: ").append(status).append("]");
+            }
+
+            Paragraph filterPara = new Paragraph(filters.toString(), filterFont);
+            filterPara.setAlignment(Paragraph.ALIGN_CENTER);
+            document.add(filterPara);
 
             PdfPTable table = new PdfPTable(8);
             table.setWidthPercentage(100f);
