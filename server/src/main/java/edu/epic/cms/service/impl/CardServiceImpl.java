@@ -5,15 +5,15 @@ import edu.epic.cms.exception.CardNotFoundException;
 import edu.epic.cms.exception.DuplicateCardException;
 import edu.epic.cms.exception.OutstandingBalanceException;
 import edu.epic.cms.model.Card;
-import edu.epic.cms.api.CardResponseDTO;
-import edu.epic.cms.api.UpdateCardDTO;
+import edu.epic.cms.dto.CardResponseDTO;
+import edu.epic.cms.dto.UpdateCardDTO;
 import edu.epic.cms.repository.CardRepo;
 
 import edu.epic.cms.service.CardService;
 import edu.epic.cms.util.CardEncryptionUtil;
 import edu.epic.cms.util.RsaEncryptionUtil;
 import edu.epic.cms.repository.CardRequestRepo;
-import edu.epic.cms.api.CreateCardRequestDTO;
+import edu.epic.cms.dto.CreateCardRequestDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

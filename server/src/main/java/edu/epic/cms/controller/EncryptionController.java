@@ -1,6 +1,6 @@
 package edu.epic.cms.controller;
 
-import edu.epic.cms.api.CommonResponseDTO;
+import edu.epic.cms.dto.CommonResponseDTO;
 import edu.epic.cms.util.RsaEncryptionUtil;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

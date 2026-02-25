@@ -1,7 +1,7 @@
 package edu.epic.cms.search.controller;
 
-import edu.epic.cms.api.CardResponseDTO;
-import edu.epic.cms.api.CommonResponseDTO;
+import edu.epic.cms.dto.CardResponseDTO;
+import edu.epic.cms.dto.CommonResponseDTO;
 import edu.epic.cms.search.service.CardSearchService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

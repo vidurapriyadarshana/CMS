@@ -1,7 +1,7 @@
 package edu.epic.cms.controller;
 
-import edu.epic.cms.api.CommonResponseDTO;
-import edu.epic.cms.api.UserResponseDTO;
+import edu.epic.cms.dto.CommonResponseDTO;
+import edu.epic.cms.dto.UserResponseDTO;
 import edu.epic.cms.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -1,7 +1,7 @@
 package edu.epic.cms.service.impl;
 
-import edu.epic.cms.api.CardReportDTO;
-import edu.epic.cms.api.CardRequestReportDTO;
+import edu.epic.cms.dto.CardReportDTO;
+import edu.epic.cms.dto.CardRequestReportDTO;
 import edu.epic.cms.repository.ReportRepo;
 import edu.epic.cms.service.ReportService;
 import edu.epic.cms.util.ReportGeneratorUtil;

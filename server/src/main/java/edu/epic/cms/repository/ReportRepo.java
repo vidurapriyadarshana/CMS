@@ -1,7 +1,7 @@
 package edu.epic.cms.repository;
 
-import edu.epic.cms.api.CardReportDTO;
-import edu.epic.cms.api.CardRequestReportDTO;
+import edu.epic.cms.dto.CardReportDTO;
+import edu.epic.cms.dto.CardRequestReportDTO;
 
 import java.util.List;
 

@@ -1,7 +1,7 @@
 package edu.epic.cms.repository;
 
 import edu.epic.cms.model.Card;
-import edu.epic.cms.api.UpdateCardDTO;
+import edu.epic.cms.dto.UpdateCardDTO;
 
 import java.util.List;
 

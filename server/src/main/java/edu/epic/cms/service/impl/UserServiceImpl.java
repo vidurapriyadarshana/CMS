@@ -1,6 +1,6 @@
 package edu.epic.cms.service.impl;
 
-import edu.epic.cms.api.UserResponseDTO;
+import edu.epic.cms.dto.UserResponseDTO;
 import edu.epic.cms.model.User;
 import edu.epic.cms.repository.UserRepo;
 import edu.epic.cms.service.UserService;

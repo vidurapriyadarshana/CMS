@@ -1,6 +1,6 @@
 package edu.epic.cms.controller;
 
-import edu.epic.cms.api.CommonResponseDTO;
+import edu.epic.cms.dto.CommonResponseDTO;
 import edu.epic.cms.model.CardRequestType;
 import edu.epic.cms.service.CardRequestTypeService;
 import org.springframework.http.ResponseEntity;

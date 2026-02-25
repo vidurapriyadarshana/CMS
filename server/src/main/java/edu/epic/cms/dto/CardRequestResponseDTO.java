@@ -1,4 +1,4 @@
-package edu.epic.cms.api;
+package edu.epic.cms.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

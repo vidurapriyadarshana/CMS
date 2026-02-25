@@ -1,8 +1,8 @@
 package edu.epic.cms.service;
 
-import edu.epic.cms.api.CardResponseDTO;
-import edu.epic.cms.api.UpdateCardDTO;
-import edu.epic.cms.api.CreateCardRequestDTO;
+import edu.epic.cms.dto.CardResponseDTO;
+import edu.epic.cms.dto.UpdateCardDTO;
+import edu.epic.cms.dto.CreateCardRequestDTO;
 
 
 import java.util.List;

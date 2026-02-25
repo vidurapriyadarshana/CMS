@@ -1,6 +1,6 @@
 package edu.epic.cms.search.service.impl;
 
-import edu.epic.cms.api.CardResponseDTO;
+import edu.epic.cms.dto.CardResponseDTO;
 import edu.epic.cms.model.Card;
 import edu.epic.cms.search.repository.CardSearchRepository;
 import edu.epic.cms.search.service.CardSearchService;

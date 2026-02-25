@@ -1,6 +1,6 @@
 package edu.epic.cms.controller;
 
-import edu.epic.cms.api.CommonResponseDTO;
+import edu.epic.cms.dto.CommonResponseDTO;
 import edu.epic.cms.model.Status;
 import edu.epic.cms.service.StatusService;
 import org.springframework.http.ResponseEntity;

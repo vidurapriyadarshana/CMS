@@ -2,9 +2,9 @@ package edu.epic.cms.controller;
 
 import edu.epic.cms.exception.CardException;
 import edu.epic.cms.model.CardRequest;
-import edu.epic.cms.api.StatusUpdateRequestDTO;
+import edu.epic.cms.dto.StatusUpdateRequestDTO;
 import edu.epic.cms.service.CardRequestService;
-import edu.epic.cms.api.CommonResponseDTO;
+import edu.epic.cms.dto.CommonResponseDTO;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

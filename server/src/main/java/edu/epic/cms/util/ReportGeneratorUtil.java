@@ -4,8 +4,8 @@ import com.lowagie.text.*;
 import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfWriter;
-import edu.epic.cms.api.CardReportDTO;
-import edu.epic.cms.api.CardRequestReportDTO;
+import edu.epic.cms.dto.CardReportDTO;
+import edu.epic.cms.dto.CardRequestReportDTO;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 

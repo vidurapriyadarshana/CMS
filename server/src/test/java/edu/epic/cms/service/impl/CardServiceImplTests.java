@@ -2,10 +2,9 @@ package edu.epic.cms.service.impl;
 
 import edu.epic.cms.exception.CardCreationException;
 import edu.epic.cms.exception.CardNotFoundException;
-import edu.epic.cms.exception.OutstandingBalanceException;
-import edu.epic.cms.api.CreateCardRequestDTO;
+import edu.epic.cms.dto.CreateCardRequestDTO;
 import edu.epic.cms.model.Card;
-import edu.epic.cms.api.UpdateCardDTO;
+import edu.epic.cms.dto.UpdateCardDTO;
 import edu.epic.cms.repository.CardRepo;
 import edu.epic.cms.repository.CardRequestRepo;
 import edu.epic.cms.util.RsaEncryptionUtil;

@@ -1,7 +1,7 @@
 package edu.epic.cms.repository.impl;
 
 import edu.epic.cms.model.Card;
-import edu.epic.cms.api.UpdateCardDTO;
+import edu.epic.cms.dto.UpdateCardDTO;
 import edu.epic.cms.repository.CardRepo;
 
 import org.springframework.jdbc.core.JdbcTemplate;
