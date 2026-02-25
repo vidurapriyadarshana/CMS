@@ -44,6 +44,10 @@ public class CardRequestServiceImpl implements CardRequestService {
             String decrypted = CardEncryptionUtil.decrypt(encrypted);
             String masked = CardEncryptionUtil.maskCardNumber(decrypted);
             request.setCardNumber(masked);
+            
+            if (request.getRequestReasonDescription() != null) {
+                request.setRequestReasonCode(request.getRequestReasonDescription());
+            }
         }
     }
 

@@ -16,6 +16,8 @@ public class CardRequest {
     @Size(max = 4, message = "Request reason code must not exceed 4 characters")
     private String requestReasonCode;
 
+    private String requestReasonDescription;
+
     @Size(max = 255, message = "Remark must not exceed 255 characters")
     private String remark;
 
@@ -56,6 +58,14 @@ public class CardRequest {
 
     public void setRequestReasonCode(String requestReasonCode) {
         this.requestReasonCode = requestReasonCode;
+    }
+
+    public String getRequestReasonDescription() {
+        return requestReasonDescription;
+    }
+
+    public void setRequestReasonDescription(String requestReasonDescription) {
+        this.requestReasonDescription = requestReasonDescription;
     }
 
     public String getRemark() {

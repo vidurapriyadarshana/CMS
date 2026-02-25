@@ -49,7 +49,7 @@ public class CardServiceImpl implements CardService {
             response.setCardNumber(maskedCardNumber);
             
             response.setExpireDate(card.getExpireDate());
-            response.setCardStatus(card.getCardStatus());
+            response.setCardStatus(card.getCardStatusDescription() != null ? card.getCardStatusDescription() : card.getCardStatus());
             response.setCreditLimit(card.getCreditLimit());
             response.setCashLimit(card.getCashLimit());
             response.setAvailableCreditLimit(card.getAvailableCreditLimit());
@@ -158,7 +158,7 @@ public class CardServiceImpl implements CardService {
         response.setCardNumber(maskedCardNumber);
 
         response.setExpireDate(card.getExpireDate());
-        response.setCardStatus(card.getCardStatus());
+        response.setCardStatus(card.getCardStatusDescription() != null ? card.getCardStatusDescription() : card.getCardStatus());
         response.setCreditLimit(card.getCreditLimit());
         response.setCashLimit(card.getCashLimit());
         response.setAvailableCreditLimit(card.getAvailableCreditLimit());

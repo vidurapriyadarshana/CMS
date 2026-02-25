@@ -20,12 +20,13 @@ public class CardRepoImpl implements CardRepo {
 
     @Override
     public List<Card> getAllCards(String cardStatus) {
-        StringBuilder sql = new StringBuilder("SELECT CardNumber, ExpireDate, CardStatus, CreditLimit, CashLimit, " +
-                "AvailableCreditLimit, AvailableCashLimit, LastUpdateTime, LastUpdatedUser FROM Card WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT c.CardNumber, c.ExpireDate, c.CardStatus, s.Description as CardStatusDescription, " +
+                "c.CreditLimit, c.CashLimit, c.AvailableCreditLimit, c.AvailableCashLimit, c.LastUpdateTime, c.LastUpdatedUser " +
+                "FROM Card c LEFT JOIN Status s ON c.CardStatus = s.StatusCode WHERE 1=1");
         
         List<Object> params = new java.util.ArrayList<>();
         if (cardStatus != null && !cardStatus.isEmpty()) {
-            sql.append(" AND CardStatus = ?");
+            sql.append(" AND c.CardStatus = ?");
             params.add(cardStatus);
         }
 
@@ -34,6 +35,7 @@ public class CardRepoImpl implements CardRepo {
             card.setCardNumber(rs.getString("CardNumber"));
             card.setExpireDate(rs.getString("ExpireDate"));
             card.setCardStatus(rs.getString("CardStatus"));
+            card.setCardStatusDescription(rs.getString("CardStatusDescription"));
             card.setCreditLimit(rs.getInt("CreditLimit"));
             card.setCashLimit(rs.getInt("CashLimit"));
             card.setAvailableCreditLimit(rs.getInt("AvailableCreditLimit"));
@@ -90,14 +92,16 @@ public class CardRepoImpl implements CardRepo {
 
     @Override
     public Card getCardByNumber(String cardNumber) {
-        String sql = "SELECT CardNumber, ExpireDate, CardStatus, CreditLimit, CashLimit, " +
-                "AvailableCreditLimit, AvailableCashLimit, LastUpdateTime, LastUpdatedUser FROM Card WHERE CardNumber = ?";
+        String sql = "SELECT c.CardNumber, c.ExpireDate, c.CardStatus, s.Description as CardStatusDescription, " +
+                "c.CreditLimit, c.CashLimit, c.AvailableCreditLimit, c.AvailableCashLimit, c.LastUpdateTime, c.LastUpdatedUser " +
+                "FROM Card c LEFT JOIN Status s ON c.CardStatus = s.StatusCode WHERE c.CardNumber = ?";
 
         List<Card> cards = jdbcTemplate.query(sql, (rs, rowNum) -> {
             Card card = new Card();
             card.setCardNumber(rs.getString("CardNumber"));
             card.setExpireDate(rs.getString("ExpireDate"));
             card.setCardStatus(rs.getString("CardStatus"));
+            card.setCardStatusDescription(rs.getString("CardStatusDescription"));
             card.setCreditLimit(rs.getInt("CreditLimit"));
             card.setCashLimit(rs.getInt("CashLimit"));
             card.setAvailableCreditLimit(rs.getInt("AvailableCreditLimit"));

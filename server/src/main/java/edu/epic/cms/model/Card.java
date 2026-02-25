@@ -22,6 +22,8 @@ public class Card {
     @Size(max = 20, message = "Card status must not exceed 20 characters")
     private String cardStatus;
 
+    private String cardStatusDescription;
+
     @Min(value = 0, message = "Credit limit must be a positive value")
     private Integer creditLimit;
 
@@ -61,6 +63,14 @@ public class Card {
 
     public void setCardStatus(String cardStatus) {
         this.cardStatus = cardStatus;
+    }
+
+    public String getCardStatusDescription() {
+        return cardStatusDescription;
+    }
+
+    public void setCardStatusDescription(String cardStatusDescription) {
+        this.cardStatusDescription = cardStatusDescription;
     }
 
     public Integer getCreditLimit() {

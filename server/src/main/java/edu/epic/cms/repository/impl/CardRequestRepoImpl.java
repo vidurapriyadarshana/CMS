@@ -21,6 +21,11 @@ public class CardRequestRepoImpl implements CardRequestRepo {
         CardRequest request = new CardRequest();
         request.setRequestId(rs.getInt("RequestId"));
         request.setRequestReasonCode(rs.getString("RequestReasonCode"));
+        try {
+            request.setRequestReasonDescription(rs.getString("RequestReasonDescription"));
+        } catch (java.sql.SQLException e) {
+            // Field might not exist in all queries if JOIN is omitted, though we'll update all
+        }
         request.setRemark(rs.getString("Remark"));
         request.setCardNumber(rs.getString("CardNumber"));
         if (rs.getTimestamp("CreatedTime") != null) {
@@ -34,16 +39,18 @@ public class CardRequestRepoImpl implements CardRequestRepo {
 
     @Override
     public List<CardRequest> getAllCardRequests(String requestReasonCode, String requestStatus) {
-        StringBuilder sql = new StringBuilder("SELECT RequestId, RequestReasonCode, Remark, CardNumber, CreatedTime, ApprovedUser, RequestStatus, RequestedUser FROM CardRequest WHERE 1=1");
+        StringBuilder sql = new StringBuilder("SELECT cr.RequestId, cr.RequestReasonCode, ct.Description as RequestReasonDescription, " +
+                "cr.Remark, cr.CardNumber, cr.CreatedTime, cr.ApprovedUser, cr.RequestStatus, cr.RequestedUser " +
+                "FROM CardRequest cr LEFT JOIN CardRequestType ct ON cr.RequestReasonCode = ct.Code WHERE 1=1");
         List<Object> params = new java.util.ArrayList<>();
 
         if (requestReasonCode != null && !requestReasonCode.isEmpty()) {
-            sql.append(" AND RequestReasonCode = ?");
+            sql.append(" AND cr.RequestReasonCode = ?");
             params.add(requestReasonCode);
         }
 
         if (requestStatus != null && !requestStatus.isEmpty()) {
-            sql.append(" AND RequestStatus = ?");
+            sql.append(" AND cr.RequestStatus = ?");
             params.add(requestStatus);
         }
 
@@ -53,7 +60,9 @@ public class CardRequestRepoImpl implements CardRequestRepo {
     @Override
     public List<CardRequest> getCardRequestsByCardNumber(String cardNumber) {
 
-        String sql = "SELECT RequestId, RequestReasonCode, Remark, CardNumber, CreatedTime, ApprovedUser, RequestStatus, RequestedUser FROM CardRequest WHERE CardNumber = ?";
+        String sql = "SELECT cr.RequestId, cr.RequestReasonCode, ct.Description as RequestReasonDescription, " +
+                "cr.Remark, cr.CardNumber, cr.CreatedTime, cr.ApprovedUser, cr.RequestStatus, cr.RequestedUser " +
+                "FROM CardRequest cr LEFT JOIN CardRequestType ct ON cr.RequestReasonCode = ct.Code WHERE cr.CardNumber = ?";
         return jdbcTemplate.query(sql, rowMapper, cardNumber);
     }
 
