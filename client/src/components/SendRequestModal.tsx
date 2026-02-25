@@ -102,7 +102,7 @@ const SendRequestModal: React.FC<SendRequestModalProps> = ({ isOpen, onClose, ca
         }
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
@@ -160,15 +160,21 @@ const SendRequestModal: React.FC<SendRequestModalProps> = ({ isOpen, onClose, ca
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">Remark</label>
-                            <input
-                                type="text"
+                            <div className="flex justify-between items-center mb-1">
+                                <label className="block text-sm font-medium text-slate-700">Remark</label>
+                                <span className={`text-xs font-medium ${formData.remark.length >= 255 ? 'text-red-500' : 'text-slate-400'}`}>
+                                    {formData.remark.length}/255
+                                </span>
+                            </div>
+                            <textarea
                                 name="remark"
                                 required
                                 value={formData.remark}
                                 onChange={handleChange}
                                 placeholder="Enter a remark or reason details"
-                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all"
+                                maxLength={255}
+                                rows={3}
+                                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all resize-none"
                             />
                         </div>
 
